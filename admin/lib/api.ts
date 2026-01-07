@@ -112,7 +112,7 @@ class AdminApiClient {
   }
 
   async getCategory(id: string) {
-    return this.request(`/categories/${id}`);
+    return this.request<{ category: any }>(`/categories/${id}`);
   }
 
   async createCategory(categoryData: any) {

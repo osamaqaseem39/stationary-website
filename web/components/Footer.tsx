@@ -1,3 +1,4 @@
+import React from 'react'
 import Link from 'next/link'
 
 export default function Footer() {
@@ -87,7 +88,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
     </footer>
   )
 }
