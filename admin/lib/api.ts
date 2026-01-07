@@ -207,6 +207,10 @@ class AdminApiClient {
     return this.request<VariantsResponse>(`/product-variants${query}`);
   }
 
+  async getVariant(id: string) {
+    return this.request<{ variant: any }>(`/product-variants/${id}`);
+  }
+
   async createVariant(variantData: any) {
     return this.request('/product-variants', {
       method: 'POST',
@@ -218,6 +222,12 @@ class AdminApiClient {
     return this.request(`/product-variants/${id}`, {
       method: 'PUT',
       body: JSON.stringify(variantData),
+    });
+  }
+
+  async deleteVariant(id: string) {
+    return this.request(`/product-variants/${id}`, {
+      method: 'DELETE',
     });
   }
 

@@ -18,11 +18,24 @@ export default function EditCategoryPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [category, setCategory] = useState<any>(null)
+  const [activeTab, setActiveTab] = useState<'basic' | 'seo' | 'display'>('basic')
+  
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     parentId: '',
     description: '',
+    shortDescription: '',
+    
+    seoTitle: '',
+    seoDescription: '',
+    seoKeywords: '',
+    
+    image: '',
+    displayOrder: '0',
     isActive: true,
+    showInMenu: true,
+    featured: false,
   })
 
   useEffect(() => {
@@ -40,9 +53,20 @@ export default function EditCategoryPage() {
         setCategory(cat)
         setFormData({
           name: cat.name || '',
+          slug: cat.slug || '',
           parentId: cat.parentId?._id || cat.parentId || '',
           description: cat.description || '',
+          shortDescription: cat.shortDescription || '',
+          
+          seoTitle: cat.seoTitle || '',
+          seoDescription: cat.seoDescription || '',
+          seoKeywords: cat.seoKeywords || '',
+          
+          image: cat.image || '',
+          displayOrder: cat.displayOrder?.toString() || '0',
           isActive: cat.isActive !== false,
+          showInMenu: cat.showInMenu !== false,
+          featured: cat.featured || false,
         })
       }
     } catch (error) {
@@ -70,10 +94,24 @@ export default function EditCategoryPage() {
 
     try {
       setLoading(true)
-      const payload = {
-        ...formData,
+      const payload: any = {
+        name: formData.name,
+        slug: formData.slug,
         parentId: formData.parentId || undefined,
+        description: formData.description,
+        shortDescription: formData.shortDescription,
+        
+        seoTitle: formData.seoTitle,
+        seoDescription: formData.seoDescription,
+        seoKeywords: formData.seoKeywords,
+        
+        image: formData.image || undefined,
+        displayOrder: parseInt(formData.displayOrder),
+        isActive: formData.isActive,
+        showInMenu: formData.showInMenu,
+        featured: formData.featured,
       }
+
       const result = await adminApiClient.updateCategory(id, payload)
       if (result.error) {
         alert(result.error)
@@ -97,6 +135,12 @@ export default function EditCategoryPage() {
       </main>
     )
   }
+
+  const tabs = [
+    { id: 'basic', label: 'Basic Info' },
+    { id: 'seo', label: 'SEO' },
+    { id: 'display', label: 'Display' },
+  ]
 
   return (
     <main className="min-h-screen bg-gray-100">
@@ -130,7 +174,7 @@ export default function EditCategoryPage() {
       </aside>
 
       <div className="ml-64 p-8">
-        <div className="max-w-3xl">
+        <div className="max-w-6xl">
           <div className="mb-6">
             <Link
               href="/dashboard/categories"
@@ -141,63 +185,218 @@ export default function EditCategoryPage() {
             <h1 className="text-4xl font-bold">Edit Category</h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Name *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parent Category
-              </label>
-              <select
-                value={formData.parentId}
-                onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">None (Top Level)</option>
-                {categories.filter(cat => cat._id !== id).map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </option>
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow">
+            <div className="border-b border-gray-200">
+              <nav className="flex -mb-px">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`px-6 py-3 text-sm font-medium border-b-2 transition ${
+                      activeTab === tab.id
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
                 ))}
-              </select>
+              </nav>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+            <div className="p-6">
+              {activeTab === 'basic' && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Slug (URL)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Parent Category
+                    </label>
+                    <select
+                      value={formData.parentId}
+                      onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">None (Top Level)</option>
+                      {categories.filter(cat => cat._id !== id).map((cat) => (
+                        <option key={cat._id} value={cat._id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Short Description
+                    </label>
+                    <textarea
+                      value={formData.shortDescription}
+                      onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                      rows={2}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Description
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      rows={6}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'seo' && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SEO Title
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.seoTitle}
+                      onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      maxLength={60}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{formData.seoTitle.length}/60 characters</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SEO Description
+                    </label>
+                    <textarea
+                      value={formData.seoDescription}
+                      onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      maxLength={160}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{formData.seoDescription.length}/160 characters</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      SEO Keywords
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.seoKeywords}
+                      onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Comma-separated keywords"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'display' && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category Image URL
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.image}
+                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {formData.image && (
+                      <div className="mt-4">
+                        <img
+                          src={formData.image}
+                          alt="Category preview"
+                          className="w-48 h-48 object-cover rounded-lg border border-gray-300"
+                          onError={(e) => {
+                            ;(e.target as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Display Order
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.displayOrder}
+                      onChange={(e) => setFormData({ ...formData, displayOrder: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.isActive}
+                        onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                        className="mr-2"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Active</span>
+                    </label>
+
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.showInMenu}
+                        onChange={(e) => setFormData({ ...formData, showInMenu: e.target.checked })}
+                        className="mr-2"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Show in navigation menu</span>
+                    </label>
+
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.featured}
+                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                        className="mr-2"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Featured Category</span>
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="mb-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="mr-2"
-                />
-                <span className="text-sm font-medium text-gray-700">Active</span>
-              </label>
-            </div>
-
-            <div className="flex gap-4">
+            <div className="border-t border-gray-200 p-6 flex gap-4">
               <button
                 type="submit"
                 disabled={loading}
@@ -218,4 +417,3 @@ export default function EditCategoryPage() {
     </main>
   )
 }
-
