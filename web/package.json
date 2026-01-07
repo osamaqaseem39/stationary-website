@@ -1,6 +1,7 @@
 {
-  "name": "web",
-  "version": "0.1.0",
+  "name": "gbs-web",
+  "version": "1.0.0",
+  "description": "Customer-facing Next.js website for GBS E-commerce",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
@@ -23,6 +24,19 @@
     "postcss": "^8.4.32",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/osamaqaseem39/stationary-website.git",
+    "directory": "web"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "ecommerce",
+    "frontend"
+  ],
+  "author": "",
+  "license": "UNLICENSED"
 }
 
