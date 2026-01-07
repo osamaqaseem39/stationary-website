@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { adminApiClient } from '@/lib/api'
+import { Button, Input, Textarea, Card } from '@/components/ui'
 
 interface Category {
   _id: string
@@ -185,233 +186,196 @@ export default function EditCategoryPage() {
             <h1 className="text-4xl font-bold">Edit Category</h1>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow">
-            <div className="border-b border-gray-200">
-              <nav className="flex -mb-px">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`px-6 py-3 text-sm font-medium border-b-2 transition ${
-                      activeTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+          <Card>
+            <form onSubmit={handleSubmit}>
+              <div className="border-b border-gray-200 mb-6">
+                <nav className="flex -mb-px">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`px-6 py-3 text-sm font-medium border-b-2 transition ${
+                        activeTab === tab.id
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </nav>
+              </div>
 
-            <div className="p-6">
-              {activeTab === 'basic' && (
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category Name *
-                    </label>
-                    <input
-                      type="text"
+              <div>
+                {activeTab === 'basic' && (
+                  <div className="space-y-6">
+                    <Input
+                      label="Category Name"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Slug (URL)
-                    </label>
-                    <input
-                      type="text"
+                    <Input
+                      label="Slug (URL)"
                       value={formData.slug}
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      helperText="URL-friendly version of the name"
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Parent Category
-                    </label>
-                    <select
-                      value={formData.parentId}
-                      onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">None (Top Level)</option>
-                      {categories.filter(cat => cat._id !== id).map((cat) => (
-                        <option key={cat._id} value={cat._id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Parent Category
+                      </label>
+                      <select
+                        value={formData.parentId}
+                        onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      >
+                        <option value="">None (Top Level)</option>
+                        {categories.filter(cat => cat._id !== id).map((cat) => (
+                          <option key={cat._id} value={cat._id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Short Description
-                    </label>
-                    <textarea
+                    <Textarea
+                      label="Short Description"
                       value={formData.shortDescription}
                       onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
                       rows={2}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Description
-                    </label>
-                    <textarea
+                    <Textarea
+                      label="Full Description"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       rows={6}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                </div>
-              )}
+                )}
 
-              {activeTab === 'seo' && (
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SEO Title
-                    </label>
-                    <input
-                      type="text"
+                {activeTab === 'seo' && (
+                  <div className="space-y-6">
+                    <Input
+                      label="SEO Title"
                       value={formData.seoTitle}
                       onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       maxLength={60}
+                      helperText={`${formData.seoTitle.length}/60 characters`}
                     />
-                    <p className="mt-1 text-xs text-gray-500">{formData.seoTitle.length}/60 characters</p>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SEO Description
-                    </label>
-                    <textarea
+                    <Textarea
+                      label="SEO Description"
                       value={formData.seoDescription}
                       onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
                       rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       maxLength={160}
+                      helperText={`${formData.seoDescription.length}/160 characters`}
                     />
-                    <p className="mt-1 text-xs text-gray-500">{formData.seoDescription.length}/160 characters</p>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SEO Keywords
-                    </label>
-                    <input
-                      type="text"
+                    <Input
+                      label="SEO Keywords"
                       value={formData.seoKeywords}
                       onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Comma-separated keywords"
+                      helperText="Separate keywords with commas"
                     />
                   </div>
-                </div>
-              )}
+                )}
 
-              {activeTab === 'display' && (
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category Image URL
-                    </label>
-                    <input
-                      type="text"
+                {activeTab === 'display' && (
+                  <div className="space-y-6">
+                    <Input
+                      label="Category Image URL"
+                      type="url"
                       value={formData.image}
                       onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      helperText="Enter a valid image URL"
                     />
                     {formData.image && (
                       <div className="mt-4">
                         <img
                           src={formData.image}
                           alt="Category preview"
-                          className="w-48 h-48 object-cover rounded-lg border border-gray-300"
+                          className="w-48 h-48 object-cover rounded-lg border-2 border-gray-200 shadow-md"
                           onError={(e) => {
                             ;(e.target as HTMLImageElement).style.display = 'none'
                           }}
                         />
                       </div>
                     )}
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Display Order
-                    </label>
-                    <input
+                    <Input
+                      label="Display Order"
                       type="number"
                       min="0"
                       value={formData.displayOrder}
                       onChange={(e) => setFormData({ ...formData, displayOrder: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      helperText="Lower numbers appear first"
                     />
+
+                    <div className="space-y-4">
+                      <label className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={formData.isActive}
+                          onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                          Active
+                        </span>
+                      </label>
+
+                      <label className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={formData.showInMenu}
+                          onChange={(e) => setFormData({ ...formData, showInMenu: e.target.checked })}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                          Show in navigation menu
+                        </span>
+                      </label>
+
+                      <label className="flex items-center cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={formData.featured}
+                          onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                          Featured Category
+                        </span>
+                      </label>
+                    </div>
                   </div>
+                )}
+              </div>
 
-                  <div className="space-y-3">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.isActive}
-                        onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                        className="mr-2"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Active</span>
-                    </label>
-
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.showInMenu}
-                        onChange={(e) => setFormData({ ...formData, showInMenu: e.target.checked })}
-                        className="mr-2"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Show in navigation menu</span>
-                    </label>
-
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.featured}
-                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                        className="mr-2"
-                      />
-                      <span className="text-sm font-medium text-gray-700">Featured Category</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-gray-200 p-6 flex gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
-              >
-                {loading ? 'Updating...' : 'Update Category'}
-              </button>
-              <Link
-                href="/dashboard/categories"
-                className="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition"
-              >
-                Cancel
-              </Link>
-            </div>
-          </form>
+              <div className="border-t border-gray-200 pt-6 mt-6 flex gap-4">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  isLoading={loading}
+                >
+                  Update Category
+                </Button>
+                <Button
+                  variant="outline"
+                  asChild
+                >
+                  <Link href="/dashboard/categories">Cancel</Link>
+                </Button>
+              </div>
+            </form>
+          </Card>
         </div>
       </div>
     </main>

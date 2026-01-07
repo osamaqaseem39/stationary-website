@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ProductCard from '@/components/ProductCard'
 import Newsletter from '@/components/Newsletter'
+import { Loading, Skeleton } from '@/components/ui'
 import { apiClient } from '@/lib/api'
 
 interface Product {
@@ -22,14 +23,23 @@ interface Product {
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Fetch featured products
-    apiClient.getProducts({ limit: 6 }).then((result) => {
-      if (result.data?.products) {
-        setFeaturedProducts(result.data.products.slice(0, 6))
-      }
-    })
+    setLoading(true)
+    apiClient.getProducts({ limit: 6 })
+      .then((result) => {
+        if (result.data?.products) {
+          setFeaturedProducts(result.data.products.slice(0, 6))
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load products:', error)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [])
 
   const categories = [
@@ -134,49 +144,68 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      {featuredProducts.length > 0 && (
-        <section className="py-16 lg:py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Featured Products
-              </h2>
-              <p className="text-lg text-gray-600">
-                Handpicked favorites from our collection
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {featuredProducts.map((product) => {
-                const minPrice = product.variants?.length
-                  ? Math.min(...product.variants.map((v) => v.price))
-                  : 0
-                const image = product.variants?.[0]?.images?.[0] || ''
-                
-                return (
-                  <ProductCard
-                    key={product._id}
-                    id={product._id}
-                    name={product.name}
-                    price={minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
-                    image={image}
-                    labels={product.categoryId ? [product.categoryId.name] : []}
-                  />
-                )
-              })}
-            </div>
-            
-            <div className="text-center mt-12">
-              <Link
-                href="/shop"
-                className="inline-block bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 hover:scale-105 transition-transform"
-              >
-                View All Products
-              </Link>
-            </div>
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Featured Products
+            </h2>
+            <p className="text-lg text-gray-600">
+              Handpicked favorites from our collection
+            </p>
           </div>
-        </section>
-      )}
+          
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
+                  <Skeleton variant="rectangular" height={300} />
+                  <div className="p-5">
+                    <Skeleton variant="text" width="80%" className="mb-2" />
+                    <Skeleton variant="text" width="60%" className="mb-4" />
+                    <Skeleton variant="rectangular" height={40} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : featuredProducts.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                {featuredProducts.map((product) => {
+                  const minPrice = product.variants?.length
+                    ? Math.min(...product.variants.map((v) => v.price))
+                    : 0
+                  const image = product.variants?.[0]?.images?.[0] || ''
+                  
+                  return (
+                    <ProductCard
+                      key={product._id}
+                      id={product._id}
+                      name={product.name}
+                      price={minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
+                      image={image}
+                      labels={product.categoryId ? [product.categoryId.name] : []}
+                    />
+                  )
+                })}
+              </div>
+              
+              <div className="text-center mt-12">
+                <Link
+                  href="/shop"
+                  className="inline-block bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 hover:scale-105 transition-transform"
+                >
+                  View All Products
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No featured products available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Newsletter */}
       <Newsletter />

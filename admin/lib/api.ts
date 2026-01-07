@@ -104,12 +104,33 @@ class AdminApiClient {
     return result;
   }
 
+  async register(name: string, email: string, password: string) {
+    const result = await this.request<{ user: any; accessToken: string; refreshToken: string }>(
+      '/auth/register',
+      {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password }),
+      }
+    );
+    if (result.data && typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', result.data.accessToken);
+      localStorage.setItem('refreshToken', result.data.refreshToken);
+      this.token = result.data.accessToken;
+    }
+    return result;
+  }
+
   logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       this.token = null;
     }
+  }
+
+  isAuthenticated(): boolean {
+    if (typeof window === 'undefined') return false;
+    return !!localStorage.getItem('accessToken');
   }
 
   // Products

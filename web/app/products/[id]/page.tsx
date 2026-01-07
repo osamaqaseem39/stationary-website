@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { apiClient } from '@/lib/api'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import { useToast } from '@/components/ui/ToastProvider'
 
 interface Variant {
   _id: string
@@ -35,6 +37,8 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState<string>('')
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [related, setRelated] = useState<Product[]>([])
+  const { showToast } = useToast()
 
   useEffect(() => {
     if (productId) {
@@ -48,6 +52,16 @@ export default function ProductDetailPage() {
             setSelectedImage(variantList[0]?.images?.[0] || '')
           }
           setLoading(false)
+
+          // Load related products by category
+          const categoryId = result.data.product?.categoryId?._id
+          if (categoryId) {
+            apiClient.getProducts({ categoryId, limit: 4 }).then((rel) => {
+              if (rel.data?.products) {
+                setRelated(rel.data.products.filter((p: any) => p._id !== productId))
+              }
+            })
+          }
         }
       })
     }
@@ -79,7 +93,7 @@ export default function ProductDetailPage() {
     window.dispatchEvent(new Event('cartUpdated'))
     
     // Show success message
-    alert('Added to cart!')
+    showToast('Added to cart!', 'success')
   }
 
   if (loading) {
@@ -111,25 +125,13 @@ export default function ProductDetailPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/products"
-          className="text-gray-600 hover:text-gray-900 mb-6 inline-flex items-center transition-colors"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Back to Products
-        </Link>
+        <Breadcrumbs
+          items={[
+            { label: 'Home', href: '/' },
+            { label: product.categoryId?.name || 'Products', href: '/products' },
+            { label: product.name },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
@@ -384,6 +386,52 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Reviews */}
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
+            <p className="text-gray-600">No reviews yet. Be the first to review this product.</p>
+          </div>
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Write a review</h3>
+            <div className="space-y-3">
+              <input className="w-full border rounded px-3 py-2 text-sm" placeholder="Your name" />
+              <textarea className="w-full border rounded px-3 py-2 text-sm" rows={4} placeholder="Your review" />
+              <button className="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold hover:bg-pink transition">
+                Submit review
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Related products */}
+        {related.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">You may also like</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {related.slice(0, 4).map((p: any) => {
+                const minPrice = p.variants?.length
+                  ? Math.min(...p.variants.map((v: any) => v.price))
+                  : 0
+                const image = p.variants?.[0]?.images?.[0] || ''
+                return (
+                  <Link key={p._id} href={`/products/${p._id}`} className="block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition">
+                    <div className="aspect-square bg-gray-100">
+                      {image ? <img src={image} alt={p.name} className="w-full h-full object-cover" /> : null}
+                    </div>
+                    <div className="p-4">
+                      <div className="text-sm font-semibold line-clamp-2 min-h-[2.25rem]">{p.name}</div>
+                      <div className="mt-2 text-gray-900 font-bold">
+                        {minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )

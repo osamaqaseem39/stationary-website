@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useToast } from '@/components/ui/ToastProvider'
 
 interface ProductCardProps {
   id: string
@@ -26,6 +27,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const productHref = href || `/products/${id}`
+  const { showToast } = useToast()
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -37,13 +39,17 @@ export default function ProductCard({
       
       if (existingItem) {
         existingItem.quantity += 1
+        showToast(`${name} quantity updated in cart`, 'success')
       } else {
         cart.push({ id, name, price, image, quantity: 1 })
+        showToast(`${name} added to cart`, 'success')
       }
       
       localStorage.setItem('cart', JSON.stringify(cart))
       // Trigger cart update event
       window.dispatchEvent(new Event('cartUpdated'))
+    } else {
+      showToast('This product is out of stock', 'warning')
     }
   }
 

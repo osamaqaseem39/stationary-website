@@ -3,10 +3,13 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import SearchBar from './SearchBar'
+import CartDrawer from './CartDrawer'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [cartCount, setCartCount] = useState(0)
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -38,13 +41,18 @@ export default function Header() {
   return (
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between gap-4 h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <span className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-pink to-blue bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
               GBS Store
             </span>
           </Link>
+
+          {/* Search */}
+          <div className="hidden md:block flex-1">
+            <SearchBar />
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -66,9 +74,10 @@ export default function Header() {
             ))}
             
             {/* Cart Icon */}
-            <Link
-              href="/cart"
+            <button
+              onClick={() => setIsCartOpen(true)}
               className="relative p-2 hover:bg-gray-100 rounded-full transition-colors group"
+              aria-label="Open cart"
             >
               <svg
                 className="w-6 h-6 text-gray-700 group-hover:text-pink transition-colors"
@@ -88,7 +97,7 @@ export default function Header() {
                   {cartCount > 9 ? '9+' : cartCount}
                 </span>
               )}
-            </Link>
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -125,6 +134,9 @@ export default function Header() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200 animate-fadeIn">
+            <div className="mb-4">
+              <SearchBar />
+            </div>
             <nav className="flex flex-col space-y-4">
               {navigation.map((item) => (
                 <Link
@@ -156,6 +168,9 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

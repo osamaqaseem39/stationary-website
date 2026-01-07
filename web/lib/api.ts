@@ -12,6 +12,11 @@ export interface ProductsResponse {
   limit?: number;
 }
 
+export interface ProductDetailResponse {
+  product: any;
+  variants: any[];
+}
+
 class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
@@ -109,7 +114,7 @@ class ApiClient {
   }
 
   async getProduct(id: string) {
-    return this.request(`/products/${id}`);
+    return this.request<ProductDetailResponse>(`/products/${id}`);
   }
 
   // Categories
