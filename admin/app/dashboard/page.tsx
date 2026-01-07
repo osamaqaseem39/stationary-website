@@ -44,6 +44,12 @@ export default function DashboardPage() {
           >
             Categories
           </Link>
+          <Link
+            href="/dashboard/variants"
+            className="block px-6 py-3 hover:bg-gray-700 transition"
+          >
+            Variants
+          </Link>
         </nav>
       </aside>
 

@@ -4,35 +4,37 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { adminApiClient } from '@/lib/api'
 
-interface Category {
+interface Variant {
   _id: string
-  name: string
-  slug: string
-  parentId?: {
+  sku: string
+  productId: {
     _id: string
     name: string
   }
-  description?: string
+  price: number
+  compareAtPrice?: number
+  attributes: any
   isActive: boolean
 }
 
-export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([])
+export default function VariantsPage() {
+  const [variants, setVariants] = useState<Variant[]>([])
   const [loading, setLoading] = useState(true)
+  const [productFilter, setProductFilter] = useState('')
 
   useEffect(() => {
-    loadCategories()
-  }, [])
+    loadVariants()
+  }, [productFilter])
 
-  const loadCategories = async () => {
+  const loadVariants = async () => {
     try {
       setLoading(true)
-      const result = await adminApiClient.getCategories()
-      if (result.data && 'categories' in result.data) {
-        setCategories(result.data.categories || [])
+      const result = await adminApiClient.getVariants(productFilter || undefined)
+      if (result.data) {
+        setVariants(result.data.variants || [])
       }
     } catch (error) {
-      console.error('Failed to load categories:', error)
+      console.error('Failed to load variants:', error)
     } finally {
       setLoading(false)
     }
@@ -60,10 +62,10 @@ export default function CategoriesPage() {
           <Link href="/dashboard/users" className="block px-6 py-3 hover:bg-gray-700 transition">
             Users
           </Link>
-          <Link href="/dashboard/categories" className="block px-6 py-3 bg-gray-700">
+          <Link href="/dashboard/categories" className="block px-6 py-3 hover:bg-gray-700 transition">
             Categories
           </Link>
-          <Link href="/dashboard/variants" className="block px-6 py-3 hover:bg-gray-700 transition">
+          <Link href="/dashboard/variants" className="block px-6 py-3 bg-gray-700">
             Variants
           </Link>
         </nav>
@@ -72,13 +74,23 @@ export default function CategoriesPage() {
       <div className="ml-64 p-8">
         <div className="max-w-7xl">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold">Categories</h1>
+            <h1 className="text-4xl font-bold">Product Variants</h1>
             <Link
-              href="/dashboard/categories/new"
+              href="/dashboard/variants/new"
               className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
             >
-              Add Category
+              Add Variant
             </Link>
+          </div>
+
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Filter by Product ID..."
+              value={productFilter}
+              onChange={(e) => setProductFilter(e.target.value)}
+              className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           {loading ? (
@@ -89,16 +101,19 @@ export default function CategoriesPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
+                      Product
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Slug
+                      SKU
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Parent
+                      Price
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
+                      Compare At Price
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Attributes
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
@@ -109,41 +124,48 @@ export default function CategoriesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {categories.length === 0 ? (
+                  {variants.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                        No categories found
+                      <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                        No variants found
                       </td>
                     </tr>
                   ) : (
-                    categories.map((category) => (
-                      <tr key={category._id}>
+                    variants.map((variant) => (
+                      <tr key={variant._id}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {category.name}
+                          {variant.productId?.name || 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {category.slug}
+                          {variant.sku}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {category.parentId?.name || 'None'}
+                          ₹{variant.price.toFixed(2)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-xs">
-                          {category.description || 'N/A'}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {variant.compareAtPrice ? `₹${variant.compareAtPrice.toFixed(2)}` : 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {variant.attributes && typeof variant.attributes === 'object'
+                            ? Object.entries(variant.attributes)
+                                .map(([key, value]) => `${key}: ${value}`)
+                                .join(', ')
+                            : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              category.isActive
+                              variant.isActive
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-red-100 text-red-800'
                             }`}
                           >
-                            {category.isActive ? 'Active' : 'Inactive'}
+                            {variant.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <Link
-                            href={`/dashboard/categories/${category._id}`}
+                            href={`/dashboard/variants/${variant._id}`}
                             className="text-blue-600 hover:text-blue-900"
                           >
                             Edit

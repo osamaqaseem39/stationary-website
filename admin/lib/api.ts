@@ -108,7 +108,7 @@ class AdminApiClient {
   // Categories
   async getCategories(parentId?: string) {
     const query = parentId ? `?parentId=${parentId}` : '';
-    return this.request(`/categories${query}`);
+    return this.request<{ categories: any[] }>(`/categories${query}`);
   }
 
   async getCategory(id: string) {
