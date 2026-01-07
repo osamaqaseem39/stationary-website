@@ -52,22 +52,31 @@ export default function ProductCard({
         {/* Labels */}
         {labels.length > 0 && (
           <div className="absolute top-2 left-2 flex flex-wrap gap-2">
-            {labels.map((label, index) => (
-              <span
-                key={index}
-                className={`px-2 py-1 text-xs font-semibold rounded ${
-                  label.toLowerCase() === 'sale'
-                    ? 'bg-red-500 text-white'
-                    : label.toLowerCase() === 'new!'
-                    ? 'bg-green-500 text-white'
-                    : label.toLowerCase() === 'out of stock'
-                    ? 'bg-gray-500 text-white'
-                    : 'bg-white text-gray-900'
-                }`}
-              >
-                {label}
-              </span>
-            ))}
+            {labels.map((label, index) => {
+              const labelLower = label.toLowerCase()
+              let labelClass = 'bg-blue text-white'
+              
+              if (labelLower === 'limited edition') {
+                labelClass = 'bg-red-500 text-white'
+              } else if (labelLower === 'new!') {
+                labelClass = 'bg-blue text-white'
+              } else if (labelLower === 'sale') {
+                labelClass = 'bg-red-500 text-white'
+              } else if (labelLower === 'out of stock') {
+                labelClass = 'bg-gray-500 text-white'
+              } else {
+                labelClass = 'bg-blue text-white'
+              }
+              
+              return (
+                <span
+                  key={index}
+                  className={`px-2 py-1 text-xs font-semibold rounded ${labelClass}`}
+                >
+                  {label}
+                </span>
+              )
+            })}
           </div>
         )}
       </div>
@@ -80,7 +89,7 @@ export default function ProductCard({
         <p className="text-base font-semibold text-gray-900 mb-3">{price}</p>
         <button
           disabled={isOutOfStock}
-          className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors ${
+          className={`w-full py-2 px-4 rounded text-sm font-normal transition-colors ${
             isOutOfStock
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-gray-900 text-white hover:bg-gray-800'

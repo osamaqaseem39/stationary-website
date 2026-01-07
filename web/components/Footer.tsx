@@ -2,19 +2,27 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-pink text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="w-full relative text-white overflow-hidden">
+      {/* Wavy pink background */}
+      <div className="absolute inset-0 bg-pink">
+        <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 1200 200" preserveAspectRatio="none">
+          <path
+            d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z"
+            fill="rgba(255, 255, 255, 0.1)"
+          />
+          <path
+            d="M0,120 Q400,80 800,120 T1200,120 L1200,200 L0,200 Z"
+            fill="rgba(255, 255, 255, 0.05)"
+          />
+        </svg>
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Contact */}
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="flex flex-col">
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold">orlion</span>
-                  <div className="w-8 h-8 bg-blue-light rounded"></div>
-                </div>
-                <span className="text-sm">studio</span>
-              </div>
+            <div className="mb-4">
+              <span className="text-2xl font-semibold">orlion studio</span>
             </div>
             <p className="text-sm mb-2">hi@orlionstudio.com</p>
             <p className="text-xs mt-4">©ORLIONSTUDIO 2025. All rights reserved.</p>
@@ -38,9 +46,9 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Legal Links and Social */}
+          {/* Legal Links */}
           <div>
-            <nav className="flex flex-col space-y-2 mb-4">
+            <nav className="flex flex-col space-y-2">
               <Link href="/faq" className="text-sm hover:underline">
                 FAQ&apos;S
               </Link>
@@ -54,7 +62,10 @@ export default function Footer() {
                 Imprint
               </Link>
             </nav>
-            <div className="flex space-x-4 mt-4">
+          </div>
+
+          {/* Social Media */}
+          <div className="flex items-start space-x-4">
               <a
                 href="#"
                 className="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded transition-colors"

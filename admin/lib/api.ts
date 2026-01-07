@@ -111,6 +111,10 @@ class AdminApiClient {
     return this.request(`/categories${query}`);
   }
 
+  async getCategory(id: string) {
+    return this.request(`/categories/${id}`);
+  }
+
   async createCategory(categoryData: any) {
     return this.request('/categories', {
       method: 'POST',
@@ -118,9 +122,24 @@ class AdminApiClient {
     });
   }
 
+  async updateCategory(id: string, categoryData: any) {
+    return this.request(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(categoryData),
+    });
+  }
+
+  async getProduct(id: string) {
+    return this.request(`/products/${id}`);
+  }
+
   // Orders
   async getOrders() {
     return this.request('/orders');
+  }
+
+  async getOrder(id: string) {
+    return this.request(`/orders/${id}`);
   }
 
   async updateOrderStatus(id: string, status: string) {
@@ -140,6 +159,55 @@ class AdminApiClient {
     return this.request('/inventory', {
       method: 'PUT',
       body: JSON.stringify(inventoryData),
+    });
+  }
+
+  // Product Variants
+  async getVariants(productId?: string) {
+    const query = productId ? `?productId=${productId}` : '';
+    return this.request(`/product-variants${query}`);
+  }
+
+  async createVariant(variantData: any) {
+    return this.request('/product-variants', {
+      method: 'POST',
+      body: JSON.stringify(variantData),
+    });
+  }
+
+  async updateVariant(id: string, variantData: any) {
+    return this.request(`/product-variants/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(variantData),
+    });
+  }
+
+  // Users (assuming endpoints exist or will be created)
+  async getUsers() {
+    return this.request('/users');
+  }
+
+  async getUser(id: string) {
+    return this.request(`/users/${id}`);
+  }
+
+  async createUser(userData: any) {
+    return this.request('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async updateUser(id: string, userData: any) {
+    return this.request(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async deleteUser(id: string) {
+    return this.request(`/users/${id}`, {
+      method: 'DELETE',
     });
   }
 }

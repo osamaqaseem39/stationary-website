@@ -22,14 +22,14 @@ export default function Newsletter() {
           Join my newsletter and get 10% discount for your first order, access to
           special announcements and exclusive content.
         </p>
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto items-center">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email here *"
             required
-            className="flex-1 px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
+            className="flex-1 w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
           />
           <button
             type="submit"

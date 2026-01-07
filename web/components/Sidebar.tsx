@@ -43,19 +43,16 @@ export default function Sidebar({
     <aside className="w-full md:w-64 lg:w-72 pr-0 md:pr-8 mb-8 md:mb-0">
       {/* Category Section */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Category</h2>
-          <span className="text-sm text-gray-600">{productCount} products</span>
-        </div>
-        <ul className="space-y-2">
+        <h2 className="text-base font-semibold text-gray-900 mb-4">Category</h2>
+        <ul className="space-y-1">
           {categories.map((category) => (
             <li key={category.id}>
               <button
                 onClick={() => onCategoryChange(category.id)}
-                className={`w-full text-left px-3 py-2 rounded transition-colors ${
+                className={`w-full text-left px-0 py-2 text-sm transition-colors ${
                   selectedCategory === category.id
-                    ? 'bg-blue text-white font-medium'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'text-gray-800 font-medium'
+                    : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
                 {category.name}
@@ -67,15 +64,15 @@ export default function Sidebar({
 
       {/* Filter Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Filter by</h2>
+        <h2 className="text-base font-semibold text-gray-900 mb-4">Filter by</h2>
         
         {/* Product Type Dropdown */}
         <div className="mb-4">
           <button
             onClick={() => setIsProductTypeOpen(!isProductTypeOpen)}
-            className="w-full text-left px-3 py-2 border border-gray-300 rounded bg-white hover:bg-gray-50 flex items-center justify-between"
+            className="w-full text-left px-3 py-2 border border-gray-300 rounded bg-white hover:bg-gray-50 flex items-center justify-between text-sm"
           >
-            <span className="text-sm text-gray-700">Product type</span>
+            <span className="text-gray-700">Product type</span>
             <svg
               className={`w-4 h-4 text-gray-500 transition-transform ${
                 isProductTypeOpen ? 'rotate-180' : ''

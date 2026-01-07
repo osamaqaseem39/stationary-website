@@ -264,8 +264,9 @@ export default function ShopPage() {
 
             {/* Main Content */}
             <div className="flex-1">
-              {/* Sort Bar */}
-              <div className="flex justify-end mb-6">
+              {/* Sort Bar with Product Count */}
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-sm text-gray-700">{filteredProducts.length} products</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
@@ -279,8 +280,8 @@ export default function ShopPage() {
                 </select>
               </div>
 
-              {/* Product Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
+              {/* Product Grid - 3 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {paginatedProducts.map((product) => (
                   <ProductCard key={product.id} {...product} />
                 ))}
@@ -292,7 +293,7 @@ export default function ShopPage() {
                   <button
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
-                    className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:text-gray-900"
                   >
                     &lt;
                   </button>
@@ -300,10 +301,10 @@ export default function ShopPage() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`px-4 py-2 border rounded ${
+                      className={`px-4 py-2 text-sm ${
                         currentPage === page
-                          ? 'bg-blue text-white border-blue'
-                          : 'border-gray-300 hover:bg-gray-50'
+                          ? 'text-gray-900 font-semibold'
+                          : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       {page}
@@ -314,7 +315,7 @@ export default function ShopPage() {
                       setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="px-3 py-2 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                    className="px-3 py-2 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:text-gray-900"
                   >
                     &gt;
                   </button>
