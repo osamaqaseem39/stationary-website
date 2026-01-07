@@ -367,12 +367,12 @@ export default function EditCategoryPage() {
                 >
                   Update Category
                 </Button>
-                <Button
-                  variant="outline"
-                  asChild
+                <Link
+                  href="/dashboard/categories"
+                  className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500 px-6 py-2.5 text-sm"
                 >
-                  <Link href="/dashboard/categories">Cancel</Link>
-                </Button>
+                  Cancel
+                </Link>
               </div>
             </form>
           </Card>
