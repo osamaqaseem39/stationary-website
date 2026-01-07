@@ -5,6 +5,45 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+export interface ProductsResponse {
+  products: any[];
+  total?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface ProductResponse {
+  product: any;
+}
+
+export interface CategoriesResponse {
+  categories: any[];
+}
+
+export interface CategoryResponse {
+  category: any;
+}
+
+export interface OrdersResponse {
+  orders: any[];
+}
+
+export interface OrderResponse {
+  order: any;
+}
+
+export interface UsersResponse {
+  users: any[];
+}
+
+export interface UserResponse {
+  user: any;
+}
+
+export interface VariantsResponse {
+  variants: any[];
+}
+
 class AdminApiClient {
   private baseUrl: string;
   private token: string | null = null;
@@ -82,7 +121,7 @@ class AdminApiClient {
     if (params?.limit) query.append('limit', params.limit.toString());
     
     const queryString = query.toString();
-    return this.request(`/products${queryString ? `?${queryString}` : ''}`);
+    return this.request<ProductsResponse>(`/products${queryString ? `?${queryString}` : ''}`);
   }
 
   async createProduct(productData: any) {
@@ -108,7 +147,7 @@ class AdminApiClient {
   // Categories
   async getCategories(parentId?: string) {
     const query = parentId ? `?parentId=${parentId}` : '';
-    return this.request<{ categories: any[] }>(`/categories${query}`);
+    return this.request<CategoriesResponse>(`/categories${query}`);
   }
 
   async getCategory(id: string) {
@@ -130,16 +169,16 @@ class AdminApiClient {
   }
 
   async getProduct(id: string) {
-    return this.request(`/products/${id}`);
+    return this.request<ProductResponse>(`/products/${id}`);
   }
 
   // Orders
   async getOrders() {
-    return this.request('/orders');
+    return this.request<OrdersResponse>('/orders');
   }
 
   async getOrder(id: string) {
-    return this.request(`/orders/${id}`);
+    return this.request<OrderResponse>(`/orders/${id}`);
   }
 
   async updateOrderStatus(id: string, status: string) {
@@ -165,7 +204,7 @@ class AdminApiClient {
   // Product Variants
   async getVariants(productId?: string) {
     const query = productId ? `?productId=${productId}` : '';
-    return this.request(`/product-variants${query}`);
+    return this.request<VariantsResponse>(`/product-variants${query}`);
   }
 
   async createVariant(variantData: any) {
@@ -184,11 +223,11 @@ class AdminApiClient {
 
   // Users (assuming endpoints exist or will be created)
   async getUsers() {
-    return this.request('/users');
+    return this.request<UsersResponse>('/users');
   }
 
   async getUser(id: string) {
-    return this.request(`/users/${id}`);
+    return this.request<UserResponse>(`/users/${id}`);
   }
 
   async createUser(userData: any) {

@@ -2,92 +2,123 @@ import React from 'react'
 import Link from 'next/link'
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <footer className="w-full relative text-white overflow-hidden">
-      {/* Wavy pink background */}
-      <div className="absolute inset-0 bg-pink">
-        <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 1200 200" preserveAspectRatio="none">
-          <path
-            d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z"
-            fill="rgba(255, 255, 255, 0.1)"
-          />
-          <path
-            d="M0,120 Q400,80 800,120 T1200,120 L1200,200 L0,200 Z"
-            fill="rgba(255, 255, 255, 0.05)"
-          />
-        </svg>
-      </div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and Contact */}
-          <div>
-            <div className="mb-4">
-              <span className="text-2xl font-semibold">orlion studio</span>
+    <footer className="w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          {/* Brand Section */}
+          <div className="lg:col-span-1">
+            <Link href="/" className="inline-block mb-4">
+              <span className="text-2xl font-bold bg-gradient-to-r from-pink to-blue bg-clip-text text-transparent">
+                GBS Store
+              </span>
+            </Link>
+            <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+              Your one-stop shop for premium stationery, unique gifts, and quality uniforms.
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="#"
+                className="w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-pink rounded-full transition-colors"
+                aria-label="Facebook"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-pink rounded-full transition-colors"
+                aria-label="Instagram"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-blue rounded-full transition-colors"
+                aria-label="Twitter"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+                </svg>
+              </a>
             </div>
-            <p className="text-sm mb-2">hi@orlionstudio.com</p>
-            <p className="text-xs mt-4">©ORLIONSTUDIO 2025. All rights reserved.</p>
           </div>
 
-          {/* Navigation Links */}
+          {/* Quick Links */}
           <div>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/work" className="text-sm hover:underline">
-                Work
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <nav className="flex flex-col space-y-3">
+              <Link href="/" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Home
               </Link>
-              <Link href="/shop" className="text-sm hover:underline">
+              <Link href="/shop" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Shop
               </Link>
-              <Link href="/info" className="text-sm hover:underline">
-                Info
+              <Link href="/products" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Products
               </Link>
-              <Link href="/contact" className="text-sm hover:underline">
-                Contact
+              <Link href="/cart" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Cart
+              </Link>
+              <Link href="/account" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Account
               </Link>
             </nav>
           </div>
 
-          {/* Legal Links */}
+          {/* Customer Service */}
           <div>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/faq" className="text-sm hover:underline">
-                FAQ&apos;S
+            <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
+            <nav className="flex flex-col space-y-3">
+              <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Contact Us
               </Link>
-              <Link href="/terms" className="text-sm hover:underline">
-                Terms & Conditions
+              <Link href="/shipping" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Shipping Info
               </Link>
-              <Link href="/privacy" className="text-sm hover:underline">
+              <Link href="/returns" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Returns & Exchanges
+              </Link>
+              <Link href="/faq" className="text-gray-400 hover:text-white transition-colors text-sm">
+                FAQ
+              </Link>
+            </nav>
+          </div>
+
+          {/* Legal & Info */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <nav className="flex flex-col space-y-3">
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
                 Privacy Policy
               </Link>
-              <Link href="/imprint" className="text-sm hover:underline">
-                Imprint
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Terms & Conditions
+              </Link>
+              <Link href="/cookie-policy" className="text-gray-400 hover:text-white transition-colors text-sm">
+                Cookie Policy
               </Link>
             </nav>
           </div>
+        </div>
 
-          {/* Social Media */}
-          <div className="flex items-start space-x-4">
-              <a
-                href="#"
-                className="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded transition-colors"
-                aria-label="Etsy"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8.564 2.445c0-.59.479-1.069 1.069-1.069.59 0 1.069.479 1.069 1.069 0 .59-.479 1.069-1.069 1.069-.59 0-1.069-.479-1.069-1.069zm14.936.561v2.819h-2.819l2.819-2.819zm-16.392 5.808c-.59 0-1.069.479-1.069 1.069 0 .59.479 1.069 1.069 1.069.59 0 1.069-.479 1.069-1.069 0-.59-.479-1.069-1.069-1.069zm15.321 1.716c0-.59.479-1.069 1.069-1.069.59 0 1.069.479 1.069 1.069 0 .59-.479 1.069-1.069 1.069-.59 0-1.069-.479-1.069-1.069zm-9.795 2.277c0-.828-.671-1.5-1.5-1.5s-1.5.672-1.5 1.5.671 1.5 1.5 1.5 1.5-.672 1.5-1.5zm9.795 0c0-.828-.671-1.5-1.5-1.5s-1.5.672-1.5 1.5.671 1.5 1.5 1.5 1.5-.672 1.5-1.5zm-9.795 3.723c0-.828-.671-1.5-1.5-1.5s-1.5.672-1.5 1.5.671 1.5 1.5 1.5 1.5-.672 1.5-1.5z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded transition-colors"
-                aria-label="Behance"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.637 1.477 5.313 2.688l-2.337.916c-.551-1.003-1.451-1.604-2.976-1.604-2.024 0-3.592 1.192-3.592 3.115 0 2.012 1.514 3.118 3.437 3.118 1.394 0 2.392-.605 2.976-1.604l2.337.916c-.676 1.211-2.231 2.688-5.313 2.688zm-11.01-5.844c0-2.14-1.617-3.153-3.437-3.153h-3.143v10.354h3.143c1.866 0 3.437-1.013 3.437-3.201zm-3.143-1.568h1.619c1.176 0 1.925.568 1.925 1.513 0 .955-.749 1.512-1.925 1.512h-1.619v-3.025zm-6.58 7.188h-2.854v-10.354h2.854c1.866 0 3.437 1.013 3.437 3.201 0 2.188-1.571 3.153-3.437 3.153zm0-4.785c-1.176 0-1.925-.568-1.925-1.513 0-.944.749-1.512 1.925-1.512h1.619v3.025h-1.619z" />
-                </svg>
-              </a>
-            </div>
+        {/* Bottom Bar */}
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © {currentYear} GBS Store. All rights reserved.
+            </p>
+            <p className="text-gray-400 text-sm mt-4 md:mt-0">
+              Made with ❤️ for quality shopping
+            </p>
           </div>
         </div>
+      </div>
     </footer>
   )
 }

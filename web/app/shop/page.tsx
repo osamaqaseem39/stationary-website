@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Header from '@/components/Header'
 import Banner from '@/components/Banner'
 import Sidebar from '@/components/Sidebar'
 import ProductCard from '@/components/ProductCard'
 import Newsletter from '@/components/Newsletter'
-import Footer from '@/components/Footer'
 
 // Mock data - replace with actual API calls
 const categories = [
@@ -244,7 +242,6 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Banner
@@ -326,7 +323,6 @@ export default function ShopPage() {
         </div>
       </main>
       <Newsletter />
-      <Footer />
     </div>
   )
 }

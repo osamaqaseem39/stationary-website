@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'GBS E-commerce - Stationery, Gifts & Uniforms',
-  description: 'Your one-stop shop for stationery, gifts, and uniforms',
+  title: 'GBS Store - Modern Stationery, Gifts & Uniforms',
+  description: 'Your one-stop shop for premium stationery, unique gifts, and quality uniforms. Discover beautifully designed products for every occasion.',
 }
 
 export default function RootLayout({
@@ -12,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <body className="antialiased">
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+      </body>
     </html>
   )
 }

@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import ProductCard from '@/components/ProductCard'
+import { apiClient } from '@/lib/api'
 
 interface Product {
   _id: string
@@ -12,6 +13,10 @@ interface Product {
     name: string
   }
   brand?: string
+  variants?: Array<{
+    price: number
+    images?: string[]
+  }>
 }
 
 export default function ProductsPage() {
@@ -19,16 +24,12 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data.products || [])
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error('Error fetching products:', err)
-        setLoading(false)
-      })
+    apiClient.getProducts().then((result) => {
+      if (result.data?.products) {
+        setProducts(result.data.products)
+      }
+      setLoading(false)
+    })
   }, [])
 
   if (loading) {
@@ -40,55 +41,53 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/" className="text-2xl font-bold text-pink">
-              GBS Store
-            </Link>
-            <nav className="flex gap-6">
-              <Link href="/products" className="text-gray-700 hover:text-pink">
-                Products
-              </Link>
-              <Link href="/cart" className="text-gray-700 hover:text-pink">
-                Cart
-              </Link>
-              <Link href="/account" className="text-gray-700 hover:text-pink">
-                Account
-              </Link>
-            </nav>
-          </div>
+    <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            All Products
+          </h1>
+          <p className="text-gray-600">
+            Discover our complete collection of premium products
+          </p>
         </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold mb-8">All Products</h1>
         
         {products.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-16 bg-white rounded-2xl shadow-md">
+            <svg
+              className="w-24 h-24 text-gray-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
+            </svg>
             <p className="text-gray-600 text-lg">No products found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <Link
-                key={product._id}
-                href={`/products/${product._id}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6"
-              >
-                <div className="h-48 bg-gray-200 rounded mb-4 flex items-center justify-center">
-                  <span className="text-4xl">📦</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                <p className="text-gray-600 text-sm mb-2">
-                  {product.categoryId?.name || 'Uncategorized'}
-                </p>
-                <p className="text-gray-500 text-sm line-clamp-2">
-                  {product.description || 'No description available'}
-                </p>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+            {products.map((product) => {
+              const minPrice = product.variants?.length
+                ? Math.min(...product.variants.map((v) => v.price))
+                : 0
+              const image = product.variants?.[0]?.images?.[0] || ''
+              
+              return (
+                <ProductCard
+                  key={product._id}
+                  id={product._id}
+                  name={product.name}
+                  price={minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
+                  image={image}
+                  labels={product.categoryId ? [product.categoryId.name] : []}
+                />
+              )
+            })}
           </div>
         )}
       </div>

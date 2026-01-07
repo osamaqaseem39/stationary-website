@@ -5,6 +5,13 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+export interface ProductsResponse {
+  products: any[];
+  total?: number;
+  page?: number;
+  limit?: number;
+}
+
 class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
@@ -98,7 +105,7 @@ class ApiClient {
     if (params?.limit) query.append('limit', params.limit.toString());
     
     const queryString = query.toString();
-    return this.request(`/products${queryString ? `?${queryString}` : ''}`);
+    return this.request<ProductsResponse>(`/products${queryString ? `?${queryString}` : ''}`);
   }
 
   async getProduct(id: string) {
