@@ -152,7 +152,7 @@ class AdminApiClient {
   // Inventory
   async getInventory(variantId?: string) {
     const query = variantId ? `?variantId=${variantId}` : '';
-    return this.request(`/inventory${query}`);
+    return this.request<{ inventory: any[] }>(`/inventory${query}`);
   }
 
   async updateInventory(inventoryData: any) {
