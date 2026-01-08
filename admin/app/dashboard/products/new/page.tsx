@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { adminApiClient } from '@/lib/api'
 import { uploadImage, uploadImages } from '@/lib/upload'
@@ -18,6 +18,8 @@ interface Brand {
 
 export default function NewProductPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const duplicateId = searchParams.get('duplicate')
   const [categories, setCategories] = useState<Category[]>([])
   const [brands, setBrands] = useState<Brand[]>([])
   const [loading, setLoading] = useState(false)
@@ -25,6 +27,7 @@ export default function NewProductPage() {
   const [uploadProgress, setUploadProgress] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'shipping' | 'seo' | 'images'>('basic')
+  const [isDuplicating, setIsDuplicating] = useState(false)
   
   const [formData, setFormData] = useState({
     // Basic Information
@@ -92,7 +95,10 @@ export default function NewProductPage() {
   useEffect(() => {
     loadCategories()
     loadBrands()
-  }, [])
+    if (duplicateId) {
+      loadProductForDuplicate(duplicateId)
+    }
+  }, [duplicateId])
 
   const loadCategories = async () => {
     try {
@@ -113,6 +119,76 @@ export default function NewProductPage() {
       }
     } catch (error) {
       console.error('Failed to load brands:', error)
+    }
+  }
+
+  const loadProductForDuplicate = async (productId: string) => {
+    try {
+      setIsDuplicating(true)
+      const result = await adminApiClient.getProduct(productId)
+      if (result.data && result.data.product) {
+        const prod = result.data.product
+        setFormData({
+          name: `${prod.name || ''} (Copy)`,
+          shortDescription: prod.shortDescription || '',
+          description: prod.description || '',
+          categoryId: prod.categoryId?._id || prod.categoryId || '',
+          productType: prod.productType || '',
+          brand: prod.brand || '',
+          brandId: prod.brandId?._id || prod.brandId || '',
+          vendor: prod.vendor || '',
+          tags: Array.isArray(prod.tags) ? prod.tags.join(', ') : (prod.tags || ''),
+          status: 'active', // Set to active by default for duplicates (user can change if needed)
+          featured: prod.featured || false,
+          
+          // Uniform fields
+          size: prod.size || '',
+          color: prod.color || '',
+          gender: prod.gender || '',
+          material: prod.material || '',
+          style: prod.style || '',
+          schoolName: prod.schoolName || '',
+          grade: prod.grade || '',
+          uniformType: prod.uniformType || '',
+          
+          regularPrice: prod.regularPrice?.toString() || '',
+          salePrice: prod.salePrice?.toString() || '',
+          taxStatus: prod.taxStatus || 'taxable',
+          taxClass: prod.taxClass || 'standard',
+          
+          sku: '', // Clear SKU for duplicate
+          manageStock: prod.manageStock !== false,
+          stockQuantity: prod.stockQuantity?.toString() || '',
+          stockStatus: prod.stockStatus || 'instock',
+          backorders: prod.backorders || 'no',
+          lowStockThreshold: prod.lowStockThreshold?.toString() || '',
+          
+          weight: prod.weight?.toString() || '',
+          length: prod.length?.toString() || '',
+          width: prod.width?.toString() || '',
+          height: prod.height?.toString() || '',
+          shippingClass: prod.shippingClass || '',
+          requiresShipping: prod.requiresShipping !== false,
+          shippingTaxable: prod.shippingTaxable !== false,
+          
+          seoTitle: prod.seoTitle || '',
+          seoDescription: prod.seoDescription || '',
+          seoSlug: '', // Clear slug for duplicate
+          seoKeywords: prod.seoKeywords || '',
+          
+          images: Array.isArray(prod.images) ? prod.images : [],
+          
+          purchaseNote: prod.purchaseNote || '',
+          menuOrder: prod.menuOrder?.toString() || '0',
+          reviewsAllowed: prod.reviewsAllowed !== false,
+          catalogVisibility: prod.catalogVisibility || 'visible',
+        })
+      }
+    } catch (error) {
+      console.error('Failed to load product for duplication:', error)
+      alert('Failed to load product for duplication')
+    } finally {
+      setIsDuplicating(false)
     }
   }
 
@@ -318,7 +394,9 @@ export default function NewProductPage() {
             >
               ← Back to Products
             </Link>
-            <h1 className="text-4xl font-bold">Create New Product</h1>
+            <h1 className="text-4xl font-bold">
+              {isDuplicating ? 'Loading Product...' : duplicateId ? 'Duplicate Product' : 'Create New Product'}
+            </h1>
           </div>
 
           <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow">
@@ -1102,7 +1180,7 @@ export default function NewProductPage() {
                 disabled={loading}
                 className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
               >
-                {loading ? 'Creating...' : 'Create Product'}
+                {loading ? 'Creating...' : duplicateId ? 'Create Duplicate Product' : 'Create Product'}
               </button>
               <Link
                 href="/dashboard/products"

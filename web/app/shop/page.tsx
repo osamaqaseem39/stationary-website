@@ -167,6 +167,7 @@ export default function ShopPage() {
                       <ProductCard
                         key={product._id}
                         id={product._id}
+                        productId={product._id}
                         name={product.name}
                         price={minPrice > 0 ? `From ${CURRENCY_PREFIX}${minPrice}` : 'Price on request'}
                         image={image}

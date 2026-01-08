@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToast } from '@/components/ui/ToastProvider'
+import QuickViewModal from './QuickViewModal'
+import { addToWishlist, removeFromWishlist, isInWishlist, type WishlistItem } from '@/lib/wishlist'
 
 interface ProductCardProps {
   id: string
@@ -13,6 +15,7 @@ interface ProductCardProps {
   buttonText?: string
   isOutOfStock?: boolean
   href?: string
+  productId?: string // For wishlist and quick view
 }
 
 export default function ProductCard({
@@ -24,10 +27,25 @@ export default function ProductCard({
   buttonText = 'add to cart',
   isOutOfStock = false,
   href,
+  productId,
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const [showQuickView, setShowQuickView] = useState(false)
+  const [inWishlist, setInWishlist] = useState(false)
   const productHref = href || `/products/${id}`
+  const displayProductId = productId || id
   const { showToast } = useToast()
+
+  useEffect(() => {
+    setInWishlist(isInWishlist(displayProductId))
+    
+    const handleWishlistUpdate = () => {
+      setInWishlist(isInWishlist(displayProductId))
+    }
+    
+    window.addEventListener('wishlistUpdated', handleWishlistUpdate)
+    return () => window.removeEventListener('wishlistUpdated', handleWishlistUpdate)
+  }, [displayProductId])
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -50,6 +68,64 @@ export default function ProductCard({
       window.dispatchEvent(new Event('cartUpdated'))
     } else {
       showToast('This product is out of stock', 'warning')
+    }
+  }
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowQuickView(true)
+  }
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const wishlistItem: WishlistItem = {
+      id: displayProductId,
+      name,
+      price,
+      image,
+      productId: displayProductId,
+    }
+
+    if (inWishlist) {
+      removeFromWishlist(displayProductId)
+      showToast('Removed from wishlist', 'success')
+    } else {
+      if (addToWishlist(wishlistItem)) {
+        showToast('Added to wishlist', 'success')
+      } else {
+        showToast('Already in wishlist', 'info')
+      }
+    }
+  }
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const url = `${window.location.origin}${productHref}`
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: name,
+          text: `Check out ${name} - ${price}`,
+          url: url,
+        })
+      } catch (err) {
+        // User cancelled or error occurred
+        console.log('Share cancelled', err)
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(url)
+        showToast('Link copied to clipboard!', 'success')
+      } catch (err) {
+        showToast('Failed to copy link', 'error')
+      }
     }
   }
 
@@ -121,12 +197,53 @@ export default function ProductCard({
             </div>
           )}
 
-          {/* Quick view overlay */}
+          {/* Action buttons on hover */}
           {isHovered && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-              <span className="text-white font-medium text-sm bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                Quick View
-              </span>
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center gap-2">
+              <button
+                onClick={handleQuickView}
+                className="bg-white text-gray-900 p-3 rounded-full hover:bg-pink hover:text-white transition-all transform hover:scale-110 shadow-lg"
+                title="Quick View"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+              
+              <button
+                onClick={handleWishlistToggle}
+                className={`p-3 rounded-full transition-all transform hover:scale-110 shadow-lg ${
+                  inWishlist
+                    ? 'bg-pink text-white'
+                    : 'bg-white text-gray-900 hover:bg-pink hover:text-white'
+                }`}
+                title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill={inWishlist ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+
+              <button
+                onClick={handleShare}
+                className="bg-white text-gray-900 p-3 rounded-full hover:bg-pink hover:text-white transition-all transform hover:scale-110 shadow-lg"
+                title="Share"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </button>
             </div>
           )}
         </div>
@@ -150,6 +267,13 @@ export default function ProductCard({
           </button>
         </div>
       </div>
+      
+      {/* Quick View Modal */}
+      <QuickViewModal
+        productId={displayProductId}
+        isOpen={showQuickView}
+        onClose={() => setShowQuickView(false)}
+      />
     </Link>
   )
 }

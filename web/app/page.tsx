@@ -181,6 +181,7 @@ export default function Home() {
                     <ProductCard
                       key={product._id}
                       id={product._id}
+                      productId={product._id}
                       name={product.name}
                       price={minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
                       image={image}

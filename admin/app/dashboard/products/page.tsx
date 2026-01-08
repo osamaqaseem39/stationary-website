@@ -188,6 +188,12 @@ export default function ProductsPage() {
                           >
                             Edit
                           </Link>
+                          <Link
+                            href={`/dashboard/products/new?duplicate=${product._id}`}
+                            className="text-green-600 hover:text-green-900 mr-4"
+                          >
+                            Duplicate
+                          </Link>
                           <button
                             onClick={() => handleDelete(product._id)}
                             className="text-red-600 hover:text-red-900"
