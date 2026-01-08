@@ -17,6 +17,10 @@ export interface ProductDetailResponse {
   variants: any[];
 }
 
+export interface CategoriesResponse {
+  categories: any[];
+}
+
 class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
@@ -120,7 +124,7 @@ class ApiClient {
   // Categories
   async getCategories(parentId?: string) {
     const query = parentId ? `?parentId=${parentId}` : '';
-    return this.request(`/categories${query}`);
+    return this.request<CategoriesResponse>(`/categories${query}`);
   }
 
   // Orders

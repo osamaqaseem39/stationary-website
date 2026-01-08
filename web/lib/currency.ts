@@ -22,6 +22,13 @@ export function formatPKRCompact(amount: number | string): string {
 }
 
 /**
+ * Format a number as currency (alias for formatPKR for compatibility)
+ */
+export function formatCurrency(amount: number | string): string {
+  return formatPKR(amount);
+}
+
+/**
  * Get currency symbol/prefix
  */
 export const CURRENCY_SYMBOL = 'PKR';
