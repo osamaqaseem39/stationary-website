@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
       productId: product._id,
       variantId: selectedVariant._id,
       name: product.name,
-      price: `₹${selectedVariant.price}`,
+      price: `PKR ${selectedVariant.price}`,
       image: selectedImage,
       quantity,
       variant: selectedVariant,
@@ -211,7 +211,7 @@ export default function ProductDetailPage() {
               <div className="bg-gray-50 rounded-xl p-6">
                 <div className="flex items-baseline gap-4 mb-6">
                   <span className="text-4xl font-bold text-gray-900">
-                    ₹{selectedVariant.price}
+                    PKR {selectedVariant.price}
                   </span>
                   {selectedVariant.available !== undefined && (
                     <span
@@ -266,7 +266,7 @@ export default function ProductDetailPage() {
                                 </p>
                               )}
                             </div>
-                            <span className="font-bold">₹{variant.price}</span>
+                            <span className="font-bold">PKR {variant.price}</span>
                           </div>
                         </button>
                       ))}
@@ -423,7 +423,7 @@ export default function ProductDetailPage() {
                     <div className="p-4">
                       <div className="text-sm font-semibold line-clamp-2 min-h-[2.25rem]">{p.name}</div>
                       <div className="mt-2 text-gray-900 font-bold">
-                        {minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
+                        {minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
                       </div>
                     </div>
                   </Link>

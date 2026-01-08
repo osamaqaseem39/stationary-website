@@ -158,7 +158,7 @@ export default function OrdersPage() {
                           {order.items.length} item(s)
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ₹{order.total.toFixed(2)}
+                          PKR {order.total.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span

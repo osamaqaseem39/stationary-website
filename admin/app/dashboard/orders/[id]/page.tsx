@@ -194,9 +194,9 @@ export default function OrderDetailPage() {
                       {item.productName || 'Product'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">{item.quantity}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">₹{item.price.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">PKR {item.price.toFixed(2)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      ₹{(item.price * item.quantity).toFixed(2)}
+                      PKR {(item.price * item.quantity).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -209,23 +209,23 @@ export default function OrderDetailPage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">₹{order.subtotal.toFixed(2)}</span>
+                <span className="font-medium">PKR {order.subtotal.toFixed(2)}</span>
               </div>
               {order.shippingCost > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="font-medium">₹{order.shippingCost.toFixed(2)}</span>
+                  <span className="font-medium">PKR {order.shippingCost.toFixed(2)}</span>
                 </div>
               )}
               {order.tax > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
-                  <span className="font-medium">₹{order.tax.toFixed(2)}</span>
+                  <span className="font-medium">PKR {order.tax.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between text-lg font-bold pt-2 border-t">
                 <span>Total</span>
-                <span>₹{order.total.toFixed(2)}</span>
+                <span>PKR {order.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

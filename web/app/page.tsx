@@ -182,7 +182,7 @@ export default function Home() {
                       key={product._id}
                       id={product._id}
                       name={product.name}
-                      price={minPrice > 0 ? `From ₹${minPrice}` : 'Price on request'}
+                      price={minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
                       image={image}
                       labels={product.categoryId ? [product.categoryId.name] : []}
                     />

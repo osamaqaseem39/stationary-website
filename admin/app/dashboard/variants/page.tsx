@@ -140,10 +140,10 @@ export default function VariantsPage() {
                           {variant.sku}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          ₹{variant.price.toFixed(2)}
+                          PKR {variant.price.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {variant.compareAtPrice ? `₹${variant.compareAtPrice.toFixed(2)}` : 'N/A'}
+                          {variant.compareAtPrice ? `PKR ${variant.compareAtPrice.toFixed(2)}` : 'N/A'}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {variant.attributes && typeof variant.attributes === 'object'

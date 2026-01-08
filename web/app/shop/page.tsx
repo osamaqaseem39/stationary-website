@@ -1,237 +1,97 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Banner from '@/components/Banner'
 import Sidebar from '@/components/Sidebar'
 import ProductCard from '@/components/ProductCard'
 import Newsletter from '@/components/Newsletter'
+import { apiClient } from '@/lib/api'
+import { CURRENCY_PREFIX } from '@/lib/currency'
 
-// Mock data - replace with actual API calls
-const categories = [
-  { id: 'all', name: 'All Products' },
-  { id: '3d-magnets', name: '3D Magnets' },
-  { id: 'other', name: 'Other' },
-  { id: 'postcards', name: 'Postcards' },
-  { id: 'prints', name: 'Prints' },
-  { id: 'sale', name: 'Sale' },
-  { id: 'stationery', name: 'Stationery' },
-]
+interface Product {
+  _id: string
+  name: string
+  categoryId?: {
+    _id: string
+    name: string
+  }
+  images?: string[]
+  variants?: Array<{
+    _id: string
+    price: number
+    quantity?: number
+  }>
+  isActive?: boolean
+  status?: string
+}
 
-const filterOptions = [
-  { id: '3d-magnets', name: '3D Magnets' },
-  { id: 'other', name: 'Other' },
-  { id: 'postcards', name: 'Postcards' },
-  { id: 'prints', name: 'Prints' },
-  { id: 'stationery', name: 'Stationery' },
-]
-
-const products = [
-  {
-    id: '1',
-    name: 'Design magnet set (3D printed) – RANDOMIZED',
-    price: 'From €16.50',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '2',
-    name: 'Modern Wooden Christmas Tree Ornaments – Lasercut Design',
-    price: '€16.00',
-    image: '',
-    labels: ['Limited Edition'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '3',
-    name: 'Christmas Postcards – XMAS Holiday Cards',
-    price: '€9.00',
-    image: '',
-    labels: ['NEW!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '4',
-    name: 'Empowerment Postcard – Equality & WomansDay',
-    price: '€3.50',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '5',
-    name: 'Poster design COWBOY SHRIMP',
-    price: 'From €22.00',
-    image: '',
-    labels: ['NEW!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '6',
-    name: 'Printed wall art – Graffiti design LIFE IS LOL',
-    price: 'From €22.00',
-    image: '',
-    labels: ['more colors available'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '7',
-    name: 'Celebration Postcards – Happy Birthday & Positive Messages',
-    price: '€9.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '8',
-    name: 'Design magnet set (3D printed) – HAPPY',
-    price: 'From €16.50',
-    image: '',
-    labels: [],
-    buttonText: 'preorder',
-  },
-  {
-    id: '9',
-    name: 'Printed artwork – Poster design OK LETS GO',
-    price: 'From €22.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '10',
-    name: 'Empowerment Postcard Set – Bold & Feminist Art Cards',
-    price: '€9.00',
-    image: '',
-    labels: ['NEW!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '11',
-    name: 'Trendy Cowboy Shrimp Postcard Set – Positive Vibes Illustrations',
-    price: '€9.00',
-    image: '',
-    labels: ['NEW!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '12',
-    name: 'Notepad DIN A6 – Wavy design',
-    price: '€10.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '13',
-    name: 'Artsy Illustration Postcard Set – Rabbit, Hi & Waffle',
-    price: '€9.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '14',
-    name: 'Printed wall art – poster design RABBIT',
-    price: 'From €22.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '15',
-    name: 'Magnet Design (3D printed) – transparent',
-    price: '€6.50',
-    image: '',
-    labels: ['Choose your shape!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '16',
-    name: 'Ocean Life Art Print – Seashells, Surf & Summer Vibes',
-    price: 'From €11.00',
-    image: '',
-    labels: ['Sale'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '17',
-    name: 'Lovely postcard design – STAY WITH ME',
-    price: '€3.50',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '18',
-    name: 'Sticker Pack – 5+1 unique and creative Designs',
-    price: '€5.00',
-    image: '',
-    labels: ['out of stock'],
-    buttonText: 'not available',
-    isOutOfStock: true,
-  },
-  {
-    id: '19',
-    name: 'Illustrated Postcards – Playful Monsters & Abstract Designs',
-    price: '€9.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '20',
-    name: 'Glow in the Dark – Magnet Set (3D printed)',
-    price: 'From €16.50',
-    image: '',
-    labels: ['Glow in the dark'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '21',
-    name: 'Printed wall art – Poster design GO INTERNATIONAL',
-    price: 'From €11.00',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '22',
-    name: 'Design magnet set (3D printed) – HEARTS',
-    price: 'From €16.50',
-    image: '',
-    labels: [],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '23',
-    name: 'Mystery Bundle – selected art items',
-    price: '€50.00',
-    image: '',
-    labels: ['NEW!'],
-    buttonText: 'add to cart',
-  },
-  {
-    id: '24',
-    name: 'Magnet Design (3D printed) – pink',
-    price: '€6.50',
-    image: '',
-    labels: ['Choose your shape!'],
-    buttonText: 'add to cart',
-  },
-]
+interface Category {
+  _id: string
+  name: string
+  slug?: string
+}
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState('default')
   const productsPerPage = 12
 
-  const filteredProducts = products.filter((product) => {
-    if (selectedCategory === 'all') return true
-    // Add category filtering logic here
-    return true
-  })
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true)
+      try {
+        // Load products
+        const productsResult = await apiClient.getProducts()
+        if (productsResult.data?.products) {
+          setProducts(productsResult.data.products.filter((p: Product) => p.isActive !== false))
+        }
+
+        // Load categories
+        const categoriesResult = await apiClient.getCategories()
+        if (categoriesResult.data?.categories) {
+          setCategories(categoriesResult.data.categories)
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
+  const filteredProducts = useMemo(() => {
+    let filtered = products
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((product) => 
+        product.categoryId?._id === selectedCategory
+      )
+    }
+
+    // Sort products
+    if (sortBy === 'price-low') {
+      filtered = [...filtered].sort((a, b) => {
+        const priceA = a.variants?.length ? Math.min(...a.variants.map(v => v.price)) : Infinity
+        const priceB = b.variants?.length ? Math.min(...b.variants.map(v => v.price)) : Infinity
+        return priceA - priceB
+      })
+    } else if (sortBy === 'price-high') {
+      filtered = [...filtered].sort((a, b) => {
+        const priceA = a.variants?.length ? Math.max(...a.variants.map(v => v.price)) : 0
+        const priceB = b.variants?.length ? Math.max(...b.variants.map(v => v.price)) : 0
+        return priceB - priceA
+      })
+    }
+
+    return filtered
+  }, [products, selectedCategory, sortBy])
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage
@@ -239,6 +99,14 @@ export default function ShopPage() {
     startIndex,
     startIndex + productsPerPage
   )
+
+  // Prepare categories for sidebar
+  const sidebarCategories = [
+    { id: 'all', name: 'All Products' },
+    ...categories.map(cat => ({ id: cat._id, name: cat.name }))
+  ]
+
+  const filterOptions = categories.map(cat => ({ id: cat._id, name: cat.name }))
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -252,7 +120,7 @@ export default function ShopPage() {
           <div className="flex flex-col md:flex-row gap-8 pb-16">
             {/* Sidebar */}
             <Sidebar
-              categories={categories}
+              categories={sidebarCategories}
               filterOptions={filterOptions}
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
@@ -278,11 +146,38 @@ export default function ShopPage() {
               </div>
 
               {/* Product Grid - 3 columns */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {paginatedProducts.map((product) => (
-                  <ProductCard key={product.id} {...product} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="text-center py-16">
+                  <div className="text-xl text-gray-600">Loading products...</div>
+                </div>
+              ) : paginatedProducts.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="text-xl text-gray-600">No products found</div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {paginatedProducts.map((product) => {
+                    const minPrice = product.variants?.length
+                      ? Math.min(...product.variants.map(v => v.price))
+                      : 0
+                    const image = product.images?.[0] || ''
+                    const isOutOfStock = product.variants?.every(v => (v.quantity || 0) <= 0) || false
+
+                    return (
+                      <ProductCard
+                        key={product._id}
+                        id={product._id}
+                        name={product.name}
+                        price={minPrice > 0 ? `From ${CURRENCY_PREFIX}${minPrice}` : 'Price on request'}
+                        image={image}
+                        labels={product.categoryId ? [product.categoryId.name] : []}
+                        isOutOfStock={isOutOfStock}
+                        buttonText={isOutOfStock ? 'Out of stock' : 'add to cart'}
+                      />
+                    )
+                  })}
+                </div>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (

@@ -129,7 +129,7 @@ export default function CartDrawer({
             <div className="border-t p-5">
               <div className="flex justify-between mb-4">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
+                <span className="font-semibold">PKR {subtotal.toFixed(2)}</span>
               </div>
               <Link
                 href="/cart"
