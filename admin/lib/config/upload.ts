@@ -1,10 +1,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export const uploadConfig = {
-  /** PHP upload URL (fallback/alternative) */
+  /** PHP upload URL (default upload endpoint) */
   phpUploadUrl: process.env.NEXT_PUBLIC_PHP_UPLOAD_URL || 'https://gbs.osamaqaseem.online/upload.php',
   
-  /** Backend API upload URLs */
+  /** Backend API upload URLs (alternative) */
   uploadUrl: `${API_BASE_URL}/upload/single`,
   uploadMultipleUrl: `${API_BASE_URL}/upload/multiple`,
   
@@ -23,7 +23,7 @@ export const uploadConfig = {
   /** Maximum number of images */
   maxImages: 10,
   
-  /** Upload method preference: 'api' (backend API) or 'php' */
-  uploadMethod: (process.env.NEXT_PUBLIC_UPLOAD_METHOD || 'api') as 'api' | 'php',
+  /** Upload method preference: 'api' (backend API) or 'php' (default: php) */
+  uploadMethod: (process.env.NEXT_PUBLIC_UPLOAD_METHOD || 'php') as 'api' | 'php',
 };
 
