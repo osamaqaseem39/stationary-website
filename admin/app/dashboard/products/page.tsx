@@ -93,10 +93,10 @@ export default function ProductsPage() {
             <h1 className="text-4xl font-bold">Products</h1>
             <div className="flex gap-3">
               <Link
-                href="/dashboard/products/bulk"
+                href="/dashboard/products/set"
                 className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
               >
-                Bulk Create
+                Create Set
               </Link>
               <Link
                 href="/dashboard/products/new"
@@ -152,7 +152,14 @@ export default function ProductsPage() {
                     products.map((product) => (
                       <tr key={product._id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {product.name}
+                            {(product as any).isBundle && (
+                              <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                Bundle
+                              </span>
+                            )}
+                          </div>
                           <div className="text-sm text-gray-500 truncate max-w-xs">
                             {product.description}
                           </div>

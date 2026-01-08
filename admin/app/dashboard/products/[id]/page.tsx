@@ -86,6 +86,10 @@ export default function EditProductPage() {
     // Images
     images: [] as string[],
     
+    // Bundle
+    isBundle: false,
+    bundleItems: [] as Array<{ productId: string; quantity: number; name: string }>,
+    
     // Additional
     purchaseNote: '',
     menuOrder: '0',
@@ -157,6 +161,13 @@ export default function EditProductPage() {
           seoKeywords: prod.seoKeywords || '',
           
           images: Array.isArray(prod.images) ? prod.images : [],
+          
+          isBundle: prod.isBundle || false,
+          bundleItems: Array.isArray(prod.bundleItems) ? prod.bundleItems.map((item: any) => ({
+            productId: item.productId?._id || item.productId,
+            quantity: item.quantity || 1,
+            name: item.name || item.productId?.name || 'Unknown'
+          })) : [],
           
           purchaseNote: prod.purchaseNote || '',
           menuOrder: prod.menuOrder?.toString() || '0',
@@ -318,6 +329,14 @@ export default function EditProductPage() {
         seoKeywords: formData.seoKeywords,
         
         images: formData.images,
+        
+        isBundle: formData.isBundle,
+        bundleItems: formData.isBundle && formData.bundleItems.length > 0
+          ? formData.bundleItems.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity
+            }))
+          : [],
         
         purchaseNote: formData.purchaseNote,
         menuOrder: parseInt(formData.menuOrder),
