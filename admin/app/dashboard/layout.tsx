@@ -108,6 +108,14 @@ export default function DashboardLayout({
             Categories
           </Link>
           <Link
+            href="/dashboard/brands"
+            className={`block px-6 py-3 transition ${
+              pathname?.startsWith('/dashboard/brands') ? 'bg-gray-700' : 'hover:bg-gray-700'
+            }`}
+          >
+            Brands
+          </Link>
+          <Link
             href="/dashboard/variants"
             className={`block px-6 py-3 transition ${
               pathname?.startsWith('/dashboard/variants') ? 'bg-gray-700' : 'hover:bg-gray-700'

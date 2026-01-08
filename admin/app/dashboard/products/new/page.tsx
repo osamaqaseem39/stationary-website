@@ -11,9 +11,15 @@ interface Category {
   name: string
 }
 
+interface Brand {
+  _id: string
+  name: string
+}
+
 export default function NewProductPage() {
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
+  const [brands, setBrands] = useState<Brand[]>([])
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
@@ -27,11 +33,22 @@ export default function NewProductPage() {
     description: '',
     categoryId: '',
     productType: '',
-    brand: '',
+    brand: '', // Keep for backward compatibility
+    brandId: '',
     vendor: '',
     tags: '',
     status: 'active', // active, draft, archived
     featured: false,
+    
+    // Uniform fields
+    size: '',
+    color: '',
+    gender: '',
+    material: '',
+    style: '',
+    schoolName: '',
+    grade: '',
+    uniformType: '',
     
     // Pricing
     regularPrice: '',
@@ -74,6 +91,7 @@ export default function NewProductPage() {
 
   useEffect(() => {
     loadCategories()
+    loadBrands()
   }, [])
 
   const loadCategories = async () => {
@@ -84,6 +102,17 @@ export default function NewProductPage() {
       }
     } catch (error) {
       console.error('Failed to load categories:', error)
+    }
+  }
+
+  const loadBrands = async () => {
+    try {
+      const result = await adminApiClient.getBrands()
+      if (result.data) {
+        setBrands(result.data.brands || [])
+      }
+    } catch (error) {
+      console.error('Failed to load brands:', error)
     }
   }
 
@@ -171,10 +200,21 @@ export default function NewProductPage() {
         categoryId: formData.categoryId,
         productType: formData.productType,
         brand: formData.brand,
+        brandId: formData.brandId || undefined,
         vendor: formData.vendor,
         tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
         status: formData.status,
         featured: formData.featured,
+        
+        // Uniform fields
+        size: formData.size || undefined,
+        color: formData.color || undefined,
+        gender: formData.gender || undefined,
+        material: formData.material || undefined,
+        style: formData.style || undefined,
+        schoolName: formData.schoolName || undefined,
+        grade: formData.grade || undefined,
+        uniformType: formData.uniformType || undefined,
         
         // Pricing
         regularPrice: formData.regularPrice ? parseFloat(formData.regularPrice) : undefined,
@@ -385,26 +425,156 @@ export default function NewProductPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Brand
                       </label>
-                      <input
-                        type="text"
-                        value={formData.brand}
-                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                      <select
+                        value={formData.brandId}
+                        onChange={(e) => setFormData({ ...formData, brandId: e.target.value, brand: brands.find(b => b._id === e.target.value)?.name || '' })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Brand name"
-                      />
+                      >
+                        <option value="">Select a brand</option>
+                        {brands.map((brand) => (
+                          <option key={brand._id} value={brand._id}>
+                            {brand.name}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-xs text-gray-500">Or enter custom brand below</p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Vendor
+                        Custom Brand (if not in list)
                       </label>
                       <input
                         type="text"
-                        value={formData.vendor}
-                        onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
+                        value={formData.brand}
+                        onChange={(e) => setFormData({ ...formData, brand: e.target.value, brandId: '' })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Vendor/Supplier name"
+                        placeholder="Enter custom brand name"
                       />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vendor
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.vendor}
+                      onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Vendor/Supplier name"
+                    />
+                  </div>
+
+                  {/* Uniform Fields Section */}
+                  <div className="border-t border-gray-200 pt-6 mt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Uniform Product Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Size
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.size}
+                          onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., S, M, L, XL"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Color
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.color}
+                          onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Navy Blue, White"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Gender
+                        </label>
+                        <select
+                          value={formData.gender}
+                          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="unisex">Unisex</option>
+                          <option value="kids">Kids</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Material
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.material}
+                          onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Cotton, Polyester"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Style
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.style}
+                          onChange={(e) => setFormData({ ...formData, style: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Classic, Modern"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Uniform Type
+                        </label>
+                        <select
+                          value={formData.uniformType}
+                          onChange={(e) => setFormData({ ...formData, uniformType: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select type</option>
+                          <option value="school">School</option>
+                          <option value="sports">Sports</option>
+                          <option value="formal">Formal</option>
+                          <option value="casual">Casual</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          School Name
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.schoolName}
+                          onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="School or organization name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Grade/Class
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.grade}
+                          onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Grade 1, Class A"
+                        />
+                      </div>
                     </div>
                   </div>
 

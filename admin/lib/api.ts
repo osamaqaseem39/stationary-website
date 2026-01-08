@@ -24,6 +24,14 @@ export interface CategoryResponse {
   category: any;
 }
 
+export interface BrandsResponse {
+  brands: any[];
+}
+
+export interface BrandResponse {
+  brand: any;
+}
+
 export interface OrdersResponse {
   orders: any[];
 }
@@ -186,6 +194,35 @@ class AdminApiClient {
     return this.request(`/categories/${id}`, {
       method: 'PUT',
       body: JSON.stringify(categoryData),
+    });
+  }
+
+  // Brands
+  async getBrands() {
+    return this.request<BrandsResponse>('/brands');
+  }
+
+  async getBrand(id: string) {
+    return this.request<BrandResponse>(`/brands/${id}`);
+  }
+
+  async createBrand(brandData: any) {
+    return this.request('/brands', {
+      method: 'POST',
+      body: JSON.stringify(brandData),
+    });
+  }
+
+  async updateBrand(id: string, brandData: any) {
+    return this.request(`/brands/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(brandData),
+    });
+  }
+
+  async deleteBrand(id: string) {
+    return this.request(`/brands/${id}`, {
+      method: 'DELETE',
     });
   }
 
