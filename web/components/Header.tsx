@@ -13,7 +13,6 @@ export default function Header() {
   const [wishlistCount, setWishlistCount] = useState(0)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     // Load cart count from localStorage or API
