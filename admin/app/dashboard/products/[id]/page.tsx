@@ -175,7 +175,8 @@ export default function EditProductPage() {
         const result = await uploadImage(files[0])
         if (result.success && result.url) {
           handleImageAdd(result.url)
-          setUploadProgress('Image uploaded successfully!')
+          // Auto-clear progress after brief success indication
+          setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
           alert(result.error || 'Failed to upload image')
@@ -186,7 +187,8 @@ export default function EditProductPage() {
         const result = await uploadImages(fileArray)
         if (result.success && result.urls) {
           result.urls.forEach(url => handleImageAdd(url))
-          setUploadProgress(`${result.urls.length} images uploaded successfully!`)
+          // Auto-clear progress after brief success indication
+          setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
           alert(result.error || 'Failed to upload images')
@@ -202,8 +204,13 @@ export default function EditProductPage() {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      // Clear progress message after 3 seconds
-      setTimeout(() => setUploadProgress(''), 3000)
+      // Only show error messages, clear success messages immediately
+      if (!uploadProgress.includes('failed') && !uploadProgress.includes('Failed')) {
+        setUploadProgress('')
+      } else {
+        // Clear error messages after 5 seconds
+        setTimeout(() => setUploadProgress(''), 5000)
+      }
     }
   }
 
@@ -870,7 +877,7 @@ export default function EditProductPage() {
                           Select one or more images (JPEG, PNG, GIF, WebP, SVG)
                         </p>
                         {uploadProgress && (
-                          <p className={`text-sm mt-2 ${uploadProgress.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+                          <p className="text-sm mt-2 text-red-600">
                             {uploadProgress}
                           </p>
                         )}

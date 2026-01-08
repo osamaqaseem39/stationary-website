@@ -110,7 +110,8 @@ export default function NewProductPage() {
         const result = await uploadImage(files[0])
         if (result.success && result.url) {
           handleImageAdd(result.url)
-          setUploadProgress('Image uploaded successfully!')
+          // Auto-clear progress after brief success indication
+          setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
           alert(result.error || 'Failed to upload image')
@@ -121,7 +122,8 @@ export default function NewProductPage() {
         const result = await uploadImages(fileArray)
         if (result.success && result.urls) {
           result.urls.forEach(url => handleImageAdd(url))
-          setUploadProgress(`${result.urls.length} images uploaded successfully!`)
+          // Auto-clear progress after brief success indication
+          setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
           alert(result.error || 'Failed to upload images')
@@ -137,8 +139,13 @@ export default function NewProductPage() {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      // Clear progress message after 3 seconds
-      setTimeout(() => setUploadProgress(''), 3000)
+      // Only show error messages, clear success messages immediately
+      if (!uploadProgress.includes('failed') && !uploadProgress.includes('Failed')) {
+        setUploadProgress('')
+      } else {
+        // Clear error messages after 5 seconds
+        setTimeout(() => setUploadProgress(''), 5000)
+      }
     }
   }
 

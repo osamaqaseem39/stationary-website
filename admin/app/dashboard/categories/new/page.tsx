@@ -83,7 +83,8 @@ export default function NewCategoryPage() {
       const result = await uploadImage(files[0])
       if (result.success && result.url) {
         setFormData({ ...formData, image: result.url })
-        setUploadProgress('Image uploaded successfully!')
+        // Clear progress immediately on success - image preview will show
+        setUploadProgress('')
       } else {
         setUploadProgress(result.error || 'Upload failed')
         alert(result.error || 'Failed to upload image')
@@ -97,7 +98,13 @@ export default function NewCategoryPage() {
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-      setTimeout(() => setUploadProgress(''), 3000)
+      // Only show error messages, clear success messages immediately
+      if (!uploadProgress.includes('failed') && !uploadProgress.includes('Failed')) {
+        setUploadProgress('')
+      } else {
+        // Clear error messages after 5 seconds
+        setTimeout(() => setUploadProgress(''), 5000)
+      }
     }
   }
 
@@ -374,7 +381,7 @@ export default function NewCategoryPage() {
                           Select an image (JPEG, PNG, GIF, WebP, SVG)
                         </p>
                         {uploadProgress && (
-                          <p className={`text-sm mt-2 ${uploadProgress.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+                          <p className="text-sm mt-2 text-red-600">
                             {uploadProgress}
                           </p>
                         )}
