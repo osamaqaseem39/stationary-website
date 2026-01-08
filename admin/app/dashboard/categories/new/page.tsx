@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { adminApiClient } from '@/lib/api'
+import { uploadImage } from '@/lib/upload'
 
 interface Category {
   _id: string
@@ -14,6 +15,9 @@ export default function NewCategoryPage() {
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [activeTab, setActiveTab] = useState<'basic' | 'seo' | 'display'>('basic')
   
   const [formData, setFormData] = useState({
@@ -66,6 +70,39 @@ export default function NewCategoryPage() {
       name,
       slug: formData.slug || generateSlug(name)
     })
+  }
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    setUploadProgress('Uploading image...')
+
+    try {
+      const result = await uploadImage(files[0])
+      if (result.success && result.url) {
+        setFormData({ ...formData, image: result.url })
+        setUploadProgress('Image uploaded successfully!')
+      } else {
+        setUploadProgress(result.error || 'Upload failed')
+        alert(result.error || 'Failed to upload image')
+      }
+    } catch (error: any) {
+      console.error('Upload error:', error)
+      setUploadProgress('Upload failed')
+      alert(error.message || 'Failed to upload image')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      setTimeout(() => setUploadProgress(''), 3000)
+    }
+  }
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -311,15 +348,51 @@ export default function NewCategoryPage() {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Category Image URL
+                      Category Image
                     </label>
-                    <input
-                      type="text"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="https://example.com/image.jpg"
-                    />
+                    
+                    {/* File Upload Section */}
+                    <div className="mb-4 p-4 border-2 border-dashed border-gray-300 rounded-lg">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                        disabled={uploading}
+                      />
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={handleUploadClick}
+                          disabled={uploading}
+                          className="mb-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {uploading ? 'Uploading...' : 'Upload Image'}
+                        </button>
+                        <p className="text-sm text-gray-500">
+                          Select an image (JPEG, PNG, GIF, WebP, SVG)
+                        </p>
+                        {uploadProgress && (
+                          <p className={`text-sm mt-2 ${uploadProgress.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+                            {uploadProgress}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* URL Input Section */}
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-2">Or enter image URL:</p>
+                      <input
+                        type="text"
+                        value={formData.image}
+                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+
                     {formData.image && (
                       <div className="mt-4">
                         <img
