@@ -23,7 +23,7 @@ export const uploadConfig = {
   /** Maximum number of images */
   maxImages: 10,
   
-  /** Upload method preference: 'api' (backend API) or 'php' (default: php) */
-  uploadMethod: (process.env.NEXT_PUBLIC_UPLOAD_METHOD || 'php') as 'api' | 'php',
+  /** Upload method preference: 'api' (backend API - recommended, avoids CORS issues) or 'php' (default: api) */
+  uploadMethod: (process.env.NEXT_PUBLIC_UPLOAD_METHOD || 'api') as 'api' | 'php',
 };
 
