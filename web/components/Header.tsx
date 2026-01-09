@@ -49,13 +49,14 @@ export default function Header() {
   ]
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-md shadow-gray-100/50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            <span className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-pink to-blue bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
+          <Link href="/" className="flex items-center group animate-fadeInLeft">
+            <span className="text-2xl lg:text-3xl font-extrabold gradient-text group-hover:scale-110 transition-transform duration-300 relative">
               GBS Store
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-pink to-blue group-hover:w-full transition-all duration-300"></span>
             </span>
           </Link>
 
@@ -65,32 +66,36 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 animate-fadeInDown">
+            {navigation.map((item, index) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-medium transition-colors relative ${
+                className={`text-sm font-semibold transition-all duration-300 relative group ${
                   item.active
                     ? 'text-gray-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
-                {item.name}
-                {item.active && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-pink to-blue"></span>
+                <span className="relative z-10">{item.name}</span>
+                {item.active ? (
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-pink to-blue animate-scaleIn"></span>
+                ) : (
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-pink to-blue transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 )}
+                <span className="absolute inset-0 bg-pink/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
               </Link>
             ))}
             
             {/* Wishlist Icon */}
             <Link
               href="/wishlist"
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors group"
+              className="relative p-3 hover:bg-gradient-to-br hover:from-pink/10 hover:to-blue/10 rounded-full transition-all duration-300 group hover:scale-110 animate-fadeInRight animation-delay-200"
               aria-label="View wishlist"
             >
               <svg
-                className="w-6 h-6 text-gray-700 group-hover:text-pink transition-colors"
+                className="w-6 h-6 text-gray-700 group-hover:text-pink transition-all duration-300 transform group-hover:scale-110"
                 fill={wishlistCount > 0 ? 'currentColor' : 'none'}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -103,20 +108,21 @@ export default function Header() {
                 />
               </svg>
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-pink text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white animate-fadeIn">
+                <span className="absolute -top-1 -right-1 bg-gradient-to-br from-pink to-pink-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-lg animate-scaleIn animate-pulse-glow">
                   {wishlistCount > 9 ? '9+' : wishlistCount}
                 </span>
               )}
+              <span className="absolute inset-0 rounded-full bg-pink/0 group-hover:bg-pink/20 transition-all duration-300 -z-10"></span>
             </Link>
 
             {/* Cart Icon */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 hover:bg-gray-100 rounded-full transition-colors group"
+              className="relative p-3 hover:bg-gradient-to-br hover:from-blue/10 hover:to-pink/10 rounded-full transition-all duration-300 group hover:scale-110 animate-fadeInRight animation-delay-400"
               aria-label="Open cart"
             >
               <svg
-                className="w-6 h-6 text-gray-700 group-hover:text-pink transition-colors"
+                className="w-6 h-6 text-gray-700 group-hover:text-blue transition-all duration-300 transform group-hover:scale-110"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -129,10 +135,11 @@ export default function Header() {
                 />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-pink text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white animate-fadeIn">
+                <span className="absolute -top-1 -right-1 bg-gradient-to-br from-blue to-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-lg animate-scaleIn animate-pulse-glow">
                   {cartCount > 9 ? '9+' : cartCount}
                 </span>
               )}
+              <span className="absolute inset-0 rounded-full bg-blue/0 group-hover:bg-blue/20 transition-all duration-300 -z-10"></span>
             </button>
           </nav>
 
@@ -169,21 +176,22 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 animate-fadeIn">
-            <div className="mb-4">
+          <div className="md:hidden py-4 border-t border-gray-200/50 animate-fadeInDown bg-white/95 backdrop-blur-md">
+            <div className="mb-4 animate-fadeInUp animation-delay-200">
               <SearchBar />
             </div>
-            <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
+            <nav className="flex flex-col space-y-3 stagger-children">
+              {navigation.map((item, index) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-base font-medium ${
+                  className={`text-base font-semibold px-4 py-2 rounded-lg transition-all duration-300 animate-fadeInLeft ${
                     item.active
-                      ? 'text-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-gray-900 bg-gradient-to-r from-pink/10 to-blue/10'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {item.name}
                 </Link>

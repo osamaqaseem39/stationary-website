@@ -130,25 +130,29 @@ export default function ProductCard({
   }
 
   return (
-    <Link href={productHref}>
+    <Link href={productHref} className="block animate-fadeInUp">
       <div
-        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover-lift cursor-pointer"
+        className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover-lift cursor-pointer card-hover border border-gray-100"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image Container */}
         <div className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
           {image ? (
-            <div
-              className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-              style={{
-                backgroundImage: `url(${image})`,
-              }}
-            />
+            <>
+              <div
+                className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-125 group-hover:rotate-2"
+                style={{
+                  backgroundImage: `url(${image})`,
+                }}
+              />
+              {/* Overlay gradient on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50">
+            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 group-hover:from-blue-100 group-hover:via-pink-100 group-hover:to-purple-100 transition-all duration-500">
               <svg
-                className="w-20 h-20 opacity-50"
+                className="w-20 h-20 opacity-50 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -162,6 +166,9 @@ export default function ProductCard({
               </svg>
             </div>
           )}
+          
+          {/* Shimmer effect */}
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
           {/* Overlay on hover */}
           {isHovered && !isOutOfStock && (
@@ -199,10 +206,11 @@ export default function ProductCard({
 
           {/* Action buttons on hover */}
           {isHovered && (
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 z-20 flex items-center justify-center gap-3 animate-fadeInUp">
               <button
                 onClick={handleQuickView}
-                className="bg-white text-gray-900 p-3 rounded-full hover:bg-pink hover:text-white transition-all transform hover:scale-110 shadow-lg"
+                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-gradient-to-br hover:from-blue hover:to-blue-600 hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-blue/50 animate-scaleIn"
+                style={{ animationDelay: '0.1s' }}
                 title="Quick View"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,15 +221,16 @@ export default function ProductCard({
               
               <button
                 onClick={handleWishlistToggle}
-                className={`p-3 rounded-full transition-all transform hover:scale-110 shadow-lg ${
+                className={`p-3.5 rounded-full transition-all duration-300 transform hover:scale-125 shadow-xl hover:shadow-2xl animate-scaleIn ${
                   inWishlist
-                    ? 'bg-pink text-white'
-                    : 'bg-white text-gray-900 hover:bg-pink hover:text-white'
+                    ? 'bg-gradient-to-br from-pink to-pink-600 text-white hover:from-pink-600 hover:to-pink'
+                    : 'bg-white/95 backdrop-blur-sm text-gray-900 hover:bg-gradient-to-br hover:from-pink hover:to-pink-600 hover:text-white'
                 }`}
+                style={{ animationDelay: '0.2s' }}
                 title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
               >
                 <svg
-                  className="w-5 h-5"
+                  className={`w-5 h-5 transform transition-transform duration-300 ${inWishlist ? 'animate-pulse-glow' : ''}`}
                   fill={inWishlist ? 'currentColor' : 'none'}
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -237,7 +246,8 @@ export default function ProductCard({
 
               <button
                 onClick={handleShare}
-                className="bg-white text-gray-900 p-3 rounded-full hover:bg-pink hover:text-white transition-all transform hover:scale-110 shadow-lg"
+                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-gradient-to-br hover:from-purple-500 hover:to-purple-600 hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-purple/50 animate-scaleIn"
+                style={{ animationDelay: '0.3s' }}
                 title="Share"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,23 +259,35 @@ export default function ProductCard({
         </div>
 
         {/* Product Info */}
-        <div className="p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem] group-hover:text-pink transition-colors">
+        <div className="p-6 bg-gradient-to-b from-white to-gray-50/50 group-hover:from-gray-50 group-hover:to-white transition-all duration-500">
+          <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 min-h-[2.5rem] group-hover:text-pink transition-colors duration-300 group-hover:translate-x-1 transform">
             {name}
           </h3>
-          <p className="text-lg font-bold text-gray-900 mb-4">{price}</p>
+          <p className="text-xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-5 group-hover:from-pink group-hover:to-blue transition-all duration-300">
+            {price}
+          </p>
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className={`w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 ${
+            className={`relative w-full py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-300 overflow-hidden btn-hover-effect ${
               isOutOfStock
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-gray-900 text-white hover:bg-pink hover:scale-105 shadow-md hover:shadow-lg'
+                : 'bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:from-pink hover:to-blue hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-pink/50 group-hover:animate-pulse-glow'
             }`}
           >
-            {isOutOfStock ? 'Out of Stock' : buttonText}
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              {isOutOfStock ? 'Out of Stock' : buttonText}
+              {!isOutOfStock && (
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              )}
+            </span>
           </button>
         </div>
+        
+        {/* Decorative corner accent */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink/10 to-blue/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
       
       {/* Quick View Modal */}
