@@ -58,12 +58,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #FF69B4, #87CEEB);
+  background: #517ade;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #FF1493, #4682B4);
+  background: #3d5fc7;
 }
 
 /* Animation delays */
@@ -105,7 +105,7 @@ body {
 }
 
 .hover-glow {
-  @apply transition-shadow duration-300 hover:shadow-lg hover:shadow-pink/50;
+  @apply transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/50;
 }
 
 /* Fade in animations */
@@ -184,10 +184,10 @@ body {
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 0 20px rgba(81, 122, 222, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(255, 105, 180, 0.6);
+    box-shadow: 0 0 40px rgba(81, 122, 222, 0.6);
   }
 }
 
@@ -213,12 +213,7 @@ body {
 
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 100%
-  );
+  background: rgba(255, 255, 255, 0.3);
   background-size: 1000px 100%;
 }
 
@@ -268,22 +263,10 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #FF69B4 0%, #87CEEB 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 /* Loading skeleton */
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: #f0f0f0;
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -330,12 +313,7 @@ body {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: rgba(255, 255, 255, 0.2);
   transition: left 0.5s;
 }
 
@@ -345,25 +323,13 @@ body {
 
 /* Niche-specific decorative elements */
 .stationery-pattern {
-  background-image: 
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 10px,
-      rgba(135, 206, 235, 0.05) 10px,
-      rgba(135, 206, 235, 0.05) 20px
-    );
+  background-color: rgba(81, 122, 222, 0.05);
 }
 
 .gift-pattern {
-  background-image: 
-    radial-gradient(circle at 2px 2px, rgba(255, 105, 180, 0.15) 1px, transparent 0);
-  background-size: 40px 40px;
+  background-color: rgba(255, 217, 73, 0.15);
 }
 
 .uniform-pattern {
-  background-image: 
-    linear-gradient(rgba(70, 130, 180, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(70, 130, 180, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: rgba(81, 122, 222, 0.1);
 }

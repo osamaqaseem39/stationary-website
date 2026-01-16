@@ -11,16 +11,18 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
-        pink: {
-          DEFAULT: '#FF69B4',
-          light: '#FFB6C1',
-          dark: '#FF1493',
+        primary: {
+          DEFAULT: '#517ade',
+          light: '#6b8fe8',
+          dark: '#3d5fc7',
         },
-        blue: {
-          DEFAULT: '#87CEEB',
-          light: '#B0E0E6',
-          dark: '#4682B4',
+        secondary: {
+          DEFAULT: '#ffd949',
+          light: '#ffe066',
+          dark: '#ffcc00',
         },
+        black: '#000000',
+        white: '#ffffff',
       },
       animation: {
         blob: 'blob 7s infinite',

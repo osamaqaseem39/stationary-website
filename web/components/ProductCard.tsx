@@ -137,7 +137,7 @@ export default function ProductCard({
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image Container */}
-        <div className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+        <div className="relative aspect-square bg-gray-100 overflow-hidden">
           {image ? (
             <>
               <div
@@ -146,11 +146,11 @@ export default function ProductCard({
                   backgroundImage: `url(${image})`,
                 }}
               />
-              {/* Overlay gradient on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 group-hover:from-blue-100 group-hover:via-pink-100 group-hover:to-purple-100 transition-all duration-500">
+            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 group-hover:bg-gray-200 transition-all duration-500">
               <svg
                 className="w-20 h-20 opacity-50 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
                 fill="none"
@@ -168,7 +168,7 @@ export default function ProductCard({
           )}
           
           {/* Shimmer effect */}
-          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-white/20"></div>
 
           {/* Overlay on hover */}
           {isHovered && !isOutOfStock && (
@@ -180,7 +180,7 @@ export default function ProductCard({
             <div className="absolute top-3 left-3 flex flex-wrap gap-2 z-10">
               {labels.map((label, index) => {
                 const labelLower = label.toLowerCase()
-                let labelClass = 'bg-blue-500 text-white'
+                let labelClass = 'bg-primary text-white'
                 
                 if (labelLower.includes('limited') || labelLower.includes('edition')) {
                   labelClass = 'bg-purple-600 text-white'
@@ -206,10 +206,10 @@ export default function ProductCard({
 
           {/* Action buttons on hover */}
           {isHovered && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 z-20 flex items-center justify-center gap-3 animate-fadeInUp">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20 flex items-center justify-center gap-3 animate-fadeInUp">
               <button
                 onClick={handleQuickView}
-                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-gradient-to-br hover:from-blue hover:to-blue-600 hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-blue/50 animate-scaleIn"
+                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-secondary hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-secondary/50 animate-scaleIn"
                 style={{ animationDelay: '0.1s' }}
                 title="Quick View"
               >
@@ -223,8 +223,8 @@ export default function ProductCard({
                 onClick={handleWishlistToggle}
                 className={`p-3.5 rounded-full transition-all duration-300 transform hover:scale-125 shadow-xl hover:shadow-2xl animate-scaleIn ${
                   inWishlist
-                    ? 'bg-gradient-to-br from-pink to-pink-600 text-white hover:from-pink-600 hover:to-pink'
-                    : 'bg-white/95 backdrop-blur-sm text-gray-900 hover:bg-gradient-to-br hover:from-pink hover:to-pink-600 hover:text-white'
+                    ? 'bg-primary text-white hover:bg-primary-dark'
+                    : 'bg-white/95 backdrop-blur-sm text-gray-900 hover:bg-primary hover:text-white'
                 }`}
                 style={{ animationDelay: '0.2s' }}
                 title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
@@ -246,7 +246,7 @@ export default function ProductCard({
 
               <button
                 onClick={handleShare}
-                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-gradient-to-br hover:from-purple-500 hover:to-purple-600 hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-purple/50 animate-scaleIn"
+                className="bg-white/95 backdrop-blur-sm text-gray-900 p-3.5 rounded-full hover:bg-purple-600 hover:text-white transition-all duration-300 transform hover:scale-125 hover:rotate-12 shadow-xl hover:shadow-2xl hover:shadow-purple/50 animate-scaleIn"
                 style={{ animationDelay: '0.3s' }}
                 title="Share"
               >
@@ -259,11 +259,11 @@ export default function ProductCard({
         </div>
 
         {/* Product Info */}
-        <div className="p-6 bg-gradient-to-b from-white to-gray-50/50 group-hover:from-gray-50 group-hover:to-white transition-all duration-500">
-          <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 min-h-[2.5rem] group-hover:text-pink transition-colors duration-300 group-hover:translate-x-1 transform">
+        <div className="p-6 bg-white group-hover:bg-gray-50 transition-all duration-500">
+          <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors duration-300 group-hover:translate-x-1 transform">
             {name}
           </h3>
-          <p className="text-xl font-extrabold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-5 group-hover:from-pink group-hover:to-blue transition-all duration-300">
+          <p className="text-xl font-extrabold text-gray-900 mb-5 group-hover:text-primary transition-all duration-300">
             {price}
           </p>
           <button
@@ -272,7 +272,7 @@ export default function ProductCard({
             className={`relative w-full py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-300 overflow-hidden btn-hover-effect ${
               isOutOfStock
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:from-pink hover:to-blue hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-pink/50 group-hover:animate-pulse-glow'
+                : 'bg-gray-900 text-white hover:bg-primary hover:scale-105 shadow-lg hover:shadow-xl hover:shadow-primary/50'
             }`}
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
@@ -287,7 +287,7 @@ export default function ProductCard({
         </div>
         
         {/* Decorative corner accent */}
-        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink/10 to-blue/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
       
       {/* Quick View Modal */}

@@ -111,7 +111,7 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <Banner
             title="All Products"
             description="WELCOME. Abstract design-essentials that will make a statement in your place. Shop prints, postcards, 3D printed magnets, stationery, stickers and more..."
@@ -135,7 +135,7 @@ export default function ShopPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue"
+                  className="px-4 py-2 border border-gray-300 rounded bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="default">Sort by</option>
                   <option value="price-low">Price: Low to High</option>

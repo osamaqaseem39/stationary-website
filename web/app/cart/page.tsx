@@ -76,14 +76,14 @@ export default function CartPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-8">
           Shopping Cart
         </h1>
 
         {cartItems.length === 0 ? (
           <Card className="p-12 text-center" padding="none">
-            <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
                 className="w-12 h-12 text-gray-400"
                 fill="none"
@@ -117,7 +117,7 @@ export default function CartPage() {
                   <div className="flex flex-col sm:flex-row gap-6">
                     {/* Product Image */}
                     <Link href={`/products/${item.id}`} className="flex-shrink-0">
-                      <div className="w-full sm:w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden">
+                      <div className="w-full sm:w-32 h-32 bg-gray-100 rounded-lg overflow-hidden">
                         {item.image ? (
                           <img
                             src={item.image}
@@ -149,7 +149,7 @@ export default function CartPage() {
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
                           <Link href={`/products/${item.id}`}>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-pink transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1 hover:text-primary transition-colors">
                               {item.name}
                             </h3>
                           </Link>
@@ -228,8 +228,8 @@ export default function CartPage() {
                     </span>
                   </div>
                   {subtotal < 100 && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-sm text-blue-800 font-medium">
+                    <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-3">
+                      <p className="text-sm text-secondary-dark font-medium">
                         Add PKR {(100 - subtotal).toFixed(2)} more for free shipping! 🎉
                       </p>
                     </div>

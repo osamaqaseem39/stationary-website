@@ -5,7 +5,7 @@ import Link from 'next/link'
 export default function AccountPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-8">
           My Account
         </h1>
@@ -16,9 +16,9 @@ export default function AccountPage() {
             href="/account/orders"
             className="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover-lift group"
           >
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-200 transition-colors">
+            <div className="w-16 h-16 bg-secondary/20 rounded-full flex items-center justify-center mb-6 group-hover:bg-secondary/30 transition-colors">
               <svg
-                className="w-8 h-8 text-blue"
+                className="w-8 h-8 text-secondary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ export default function AccountPage() {
             <p className="text-gray-600 mb-4">
               View your order history and track shipments
             </p>
-            <span className="text-blue font-semibold group-hover:text-pink transition-colors inline-flex items-center">
+            <span className="text-secondary font-semibold group-hover:text-primary transition-colors inline-flex items-center">
               View Orders
               <svg
                 className="w-5 h-5 ml-2"
@@ -58,9 +58,9 @@ export default function AccountPage() {
             href="/account/addresses"
             className="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-all duration-300 hover-lift group"
           >
-            <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-pink-200 transition-colors">
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/30 transition-colors">
               <svg
-                className="w-8 h-8 text-pink"
+                className="w-8 h-8 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -83,7 +83,7 @@ export default function AccountPage() {
             <p className="text-gray-600 mb-4">
               Manage your shipping addresses
             </p>
-            <span className="text-blue font-semibold group-hover:text-pink transition-colors inline-flex items-center">
+            <span className="text-secondary font-semibold group-hover:text-primary transition-colors inline-flex items-center">
               Manage Addresses
               <svg
                 className="w-5 h-5 ml-2"
@@ -122,7 +122,7 @@ export default function AccountPage() {
             <p className="text-gray-600 mb-4">
               Update your personal information
             </p>
-            <button className="text-blue font-semibold hover:text-pink transition-colors inline-flex items-center">
+            <button className="text-secondary font-semibold hover:text-primary transition-colors inline-flex items-center">
               Edit Profile
               <svg
                 className="w-5 h-5 ml-2"

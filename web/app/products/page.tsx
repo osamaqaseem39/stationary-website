@@ -66,7 +66,7 @@ export default function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Products' }]} />
         <div className="mb-6">
           <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
@@ -88,7 +88,7 @@ export default function ProductsPage() {
                 id="sort"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue"
+                className="px-3 py-2 border border-gray-300 rounded bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="relevance">Relevance</option>
                 <option value="price-low">Price: Low to High</option>

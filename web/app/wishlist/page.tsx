@@ -38,7 +38,7 @@ export default function WishlistPage() {
   if (loading) {
     return (
       <main className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading wishlist...</p>
@@ -50,7 +50,7 @@ export default function WishlistPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -87,7 +87,7 @@ export default function WishlistPage() {
               </p>
               <Link
                 href="/shop"
-                className="inline-block bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink transition-colors"
+                className="inline-block bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary transition-colors"
               >
                 Browse Products
               </Link>
@@ -105,7 +105,7 @@ export default function WishlistPage() {
                   />
                   <button
                     onClick={() => handleRemove(item.id)}
-                    className="absolute top-3 right-3 z-30 bg-white p-2 rounded-full shadow-lg hover:bg-pink hover:text-white transition-all"
+                    className="absolute top-3 right-3 z-30 bg-white p-2 rounded-full shadow-lg hover:bg-primary hover:text-white transition-all"
                     title="Remove from wishlist"
                   >
                     <svg

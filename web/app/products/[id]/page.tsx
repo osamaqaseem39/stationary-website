@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Product not found</h2>
-          <Link href="/products" className="text-blue hover:underline">
+          <Link href="/products" className="text-primary hover:underline">
             ← Back to Products
           </Link>
         </div>
@@ -124,7 +124,7 @@ export default function ProductDetailPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <Breadcrumbs
           items={[
             { label: 'Home', href: '/' },
@@ -145,7 +145,7 @@ export default function ProductDetailPage() {
                   className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
                   <svg
                     className="w-32 h-32 text-gray-400"
                     fill="none"
@@ -172,7 +172,7 @@ export default function ProductDetailPage() {
                     onClick={() => setSelectedImage(img)}
                     className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImage === img
-                        ? 'border-pink shadow-md'
+                        ? 'border-primary shadow-md'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -195,7 +195,7 @@ export default function ProductDetailPage() {
           <div className="space-y-6">
             <div>
               {product.categoryId && (
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
+                <span className="inline-block px-3 py-1 bg-secondary/20 text-secondary-dark rounded-full text-sm font-medium mb-4">
                   {product.categoryId.name}
                 </span>
               )}
@@ -247,7 +247,7 @@ export default function ProductDetailPage() {
                           disabled={(variant.available || 0) === 0}
                           className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                             selectedVariant?._id === variant._id
-                              ? 'border-pink bg-pink-50'
+                              ? 'border-primary bg-primary/10'
                               : 'border-gray-200 hover:border-gray-300'
                           } ${
                             (variant.available || 0) === 0
@@ -312,7 +312,7 @@ export default function ProductDetailPage() {
                   className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
                     (selectedVariant.available || 0) === 0
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-900 text-white hover:bg-pink hover:scale-105 shadow-lg'
+                      : 'bg-gray-900 text-white hover:bg-primary hover:scale-105 shadow-lg'
                   }`}
                 >
                   {(selectedVariant.available || 0) === 0
@@ -398,7 +398,7 @@ export default function ProductDetailPage() {
             <div className="space-y-3">
               <input className="w-full border rounded px-3 py-2 text-sm" placeholder="Your name" />
               <textarea className="w-full border rounded px-3 py-2 text-sm" rows={4} placeholder="Your review" />
-              <button className="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold hover:bg-pink transition">
+              <button className="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold hover:bg-primary transition">
                 Submit review
               </button>
             </div>

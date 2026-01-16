@@ -257,7 +257,7 @@ export default function QuickViewModal({
               <div className="flex gap-3">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink transition-colors"
+                  className="flex-1 bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary transition-colors"
                 >
                   Add to Cart
                 </button>

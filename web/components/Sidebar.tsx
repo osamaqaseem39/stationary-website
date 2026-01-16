@@ -102,7 +102,7 @@ export default function Sidebar({
                 type="checkbox"
                 checked={selectedFilters.includes(option.id)}
                 onChange={() => toggleFilter(option.id)}
-                className="w-4 h-4 text-pink border-gray-300 rounded focus:ring-pink focus:ring-2"
+                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2"
               />
               <span className="text-sm text-gray-700">{option.name}</span>
             </label>

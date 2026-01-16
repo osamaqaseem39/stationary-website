@@ -5,18 +5,18 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="relative w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+    <footer className="relative w-full bg-gray-900 text-white overflow-hidden">
       {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-pink/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue/5 rounded-full blur-3xl"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
       <div className="absolute inset-0 uniform-pattern opacity-5"></div>
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 z-10">
+      <div className="relative w-full px-4 sm:px-6 lg:px-8 py-16 lg:py-20 z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12 stagger-children">
           {/* Brand Section */}
           <div className="lg:col-span-1 animate-fadeInUp">
             <Link href="/" className="inline-block mb-6 group animate-fadeInLeft">
-              <span className="text-3xl font-extrabold bg-gradient-to-r from-pink via-blue to-pink bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 inline-block animate-pulse-glow">
+              <span className="text-3xl font-extrabold text-primary group-hover:scale-110 transition-transform duration-300 inline-block">
                 GBS Store
               </span>
             </Link>
@@ -26,7 +26,7 @@ export default function Footer() {
             <div className="flex space-x-3 animate-fadeInUp animation-delay-400">
               <a
                 href="#"
-                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-gradient-to-br hover:from-pink hover:to-pink-600 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-pink/50"
+                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-primary rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-primary/50"
                 aria-label="Facebook"
               >
                 <svg className="w-5 h-5 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@ export default function Footer() {
               </a>
               <a
                 href="#"
-                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-gradient-to-br hover:from-pink hover:to-purple-600 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-pink/50"
+                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-primary rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-primary/50"
                 aria-label="Instagram"
               >
                 <svg className="w-5 h-5 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export default function Footer() {
               </a>
               <a
                 href="#"
-                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-gradient-to-br hover:from-blue hover:to-blue-600 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-blue/50"
+                className="group relative w-12 h-12 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm hover:bg-secondary rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-secondary/50"
                 aria-label="Twitter"
               >
                 <svg className="w-5 h-5 transform group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@ export default function Footer() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-pink to-blue group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
                 </Link>
               ))}
             </nav>
@@ -105,7 +105,7 @@ export default function Footer() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue to-pink group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-secondary group-hover:w-full transition-all duration-300"></span>
                 </Link>
               ))}
             </nav>
@@ -132,7 +132,7 @@ export default function Footer() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </span>
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
                 </Link>
               ))}
             </nav>
@@ -143,11 +143,11 @@ export default function Footer() {
         <div className="mt-16 pt-8 border-t border-gray-700/50 animate-fadeInUp animation-delay-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm font-medium">
-              © {currentYear} <span className="font-bold gradient-text">GBS Store</span>. All rights reserved.
+              © {currentYear} <span className="font-bold text-primary">GBS Store</span>. All rights reserved.
             </p>
             <p className="text-gray-400 text-sm font-medium flex items-center gap-2 group">
               Made with{' '}
-              <span className="text-pink transform group-hover:scale-125 transition-transform duration-300 inline-block animate-pulse-glow">
+              <span className="text-primary transform group-hover:scale-125 transition-transform duration-300 inline-block animate-pulse-glow">
                 ❤️
               </span>{' '}
               for quality shopping
@@ -157,9 +157,7 @@ export default function Footer() {
       </div>
       
       {/* Decorative wave at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-pink via-blue to-pink opacity-20"></div>
-    </footer>
-      </div>
+      <div className="absolute bottom-0 left-0 right-0 h-2 bg-primary opacity-20"></div>
     </footer>
   )
 }

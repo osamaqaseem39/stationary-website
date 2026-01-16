@@ -23,7 +23,7 @@ export default function SearchBar({ className = '' }: { className?: string }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search products..."
-        className="w-full pl-10 pr-12 py-2.5 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-pink focus:border-transparent text-sm"
+        className="w-full pl-10 pr-12 py-2.5 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
         aria-label="Search products"
       />
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -33,7 +33,7 @@ export default function SearchBar({ className = '' }: { className?: string }) {
       </span>
       <button
         type="submit"
-        className="absolute right-1 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-sm px-4 py-1.5 rounded-full hover:bg-pink transition-colors"
+        className="absolute right-1 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-sm px-4 py-1.5 rounded-full hover:bg-primary transition-colors"
       >
         Search
       </button>
