@@ -98,7 +98,18 @@ export async function uploadImage(
 
     // Check for success flag or success message
     const isSuccess = data.success || data.message?.toLowerCase().includes('successfully');
-    const url = data.data?.url || data.url || data.link;
+
+    // Extract URL from various possible locations in the response
+    let url = data.data?.url || data.url || data.link;
+
+    // Handle array responses (urls or files array)
+    if (!url) {
+      if (Array.isArray(data.data?.urls) && data.data.urls.length > 0) {
+        url = data.data.urls[0];
+      } else if (Array.isArray(data.data?.files) && data.data.files.length > 0) {
+        url = data.data.files[0].url;
+      }
+    }
 
     if (isSuccess && url) {
       return {
