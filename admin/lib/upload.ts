@@ -57,12 +57,21 @@ export function validateImageFile(
 }
 
 /**
- * Uploads a single image file via PHP endpoint (fallback method)
+ * Uploads a single image file via PHP endpoint
  */
-async function uploadToPHP(
+export async function uploadImage(
   file: File,
   options?: ImageUploadOptions
 ): Promise<ImageUploadResult> {
+  // Validate file
+  const validation = validateImageFile(file, options);
+  if (!validation.valid) {
+    return {
+      success: false,
+      error: validation.error,
+    };
+  }
+
   try {
     const uploadUrl = options?.uploadUrl || uploadConfig.uploadUrl;
     const formData = new FormData();
@@ -96,34 +105,6 @@ async function uploadToPHP(
       throw new Error(data.message || 'Upload failed: Invalid response from server');
     }
   } catch (error: any) {
-    console.error('Error uploading to PHP:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to upload image. Please try again.',
-    };
-  }
-}
-
-
-/**
- * Uploads a single image file to PHP endpoint
- */
-export async function uploadImage(
-  file: File,
-  options?: ImageUploadOptions
-): Promise<ImageUploadResult> {
-  // Validate file
-  const validation = validateImageFile(file, options);
-  if (!validation.valid) {
-    return {
-      success: false,
-      error: validation.error,
-    };
-  }
-
-  try {
-    return await uploadToPHP(file, options);
-  } catch (error: any) {
     console.error('Error uploading image:', error);
     return {
       success: false,
@@ -132,8 +113,10 @@ export async function uploadImage(
   }
 }
 
+
+
 /**
- * Uploads multiple image files to PHP endpoint sequentially
+ * Uploads multiple image files via PHP endpoint
  */
 export async function uploadImages(
   files: File[],
@@ -146,17 +129,11 @@ export async function uploadImages(
     };
   }
 
-  // Upload files sequentially to PHP endpoint
   const results: string[] = [];
   const errors: string[] = [];
 
+  // Upload files sequentially to avoid overwhelming the server
   for (const file of files) {
-    const validation = validateImageFile(file, options);
-    if (!validation.valid) {
-      errors.push(validation.error || `Failed to upload ${file.name}`);
-      continue;
-    }
-
     const result = await uploadImage(file, options);
     if (result.success && result.url) {
       results.push(result.url);

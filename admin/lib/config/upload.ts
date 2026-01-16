@@ -1,9 +1,9 @@
 export const uploadConfig = {
-  /** PHP upload URL - only upload endpoint used */
+  /** Default upload URL */
   uploadUrl: process.env.NEXT_PUBLIC_PHP_UPLOAD_URL || 'https://gbs.osamaqaseem.online/upload.php',
 
-  /** Maximum file size in bytes (default: 10MB to match PHP config) */
-  maxFileSize: 10 * 1024 * 1024, // 10MB
+  /** Maximum file size in bytes (default: 5MB) */
+  maxFileSize: 5 * 1024 * 1024, // 5MB
 
   /** Allowed MIME types for images */
   allowedTypes: [
@@ -12,9 +12,7 @@ export const uploadConfig = {
     'image/png',
     'image/gif',
     'image/webp',
+    'image/svg+xml',
   ],
-
-  /** Maximum number of images */
-  maxImages: 10,
 };
 
