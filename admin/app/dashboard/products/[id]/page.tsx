@@ -230,7 +230,6 @@ export default function EditProductPage() {
           setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
-          alert(result.error || 'Failed to upload image')
         }
       } else {
         // Multiple files upload
@@ -242,13 +241,11 @@ export default function EditProductPage() {
           setUploadProgress('')
         } else {
           setUploadProgress(result.error || 'Upload failed')
-          alert(result.error || 'Failed to upload images')
         }
       }
     } catch (error: any) {
       console.error('Upload error:', error)
       setUploadProgress('Upload failed')
-      alert(error.message || 'Failed to upload images')
     } finally {
       setUploading(false)
       // Reset file input

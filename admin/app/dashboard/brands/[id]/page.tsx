@@ -82,12 +82,10 @@ export default function EditBrandPage() {
         setUploadProgress('')
       } else {
         setUploadProgress(result.error || 'Upload failed')
-        alert(result.error || 'Failed to upload image')
       }
     } catch (error: any) {
       console.error('Upload error:', error)
       setUploadProgress('Upload failed')
-      alert(error.message || 'Failed to upload image')
     } finally {
       setUploading(false)
       if (fileInputRef.current) {

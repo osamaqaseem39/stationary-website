@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ProductCard from '@/components/ProductCard'
 import Newsletter from '@/components/Newsletter'
+import CategoriesGrid from '@/components/CategoriesGrid'
+import Brands from '@/components/Brands'
 import { Loading, Skeleton } from '@/components/ui'
 import { apiClient } from '@/lib/api'
 
@@ -23,23 +25,32 @@ interface Product {
 
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [trendingProducts, setTrendingProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Fetch featured products
-    setLoading(true)
-    apiClient.getProducts({ limit: 6 })
-      .then((result) => {
-        if (result.data?.products) {
-          setFeaturedProducts(result.data.products.slice(0, 6))
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        // Fetch featured products (page 1)
+        const featuredRes = await apiClient.getProducts({ limit: 6, page: 1 })
+        if (featuredRes.data?.products) {
+          setFeaturedProducts(featuredRes.data.products.slice(0, 6))
         }
-      })
-      .catch((error) => {
+
+        // Fetch trending products (simulated with page 2)
+        const trendingRes = await apiClient.getProducts({ limit: 4, page: 2 })
+        if (trendingRes.data?.products) {
+          setTrendingProducts(trendingRes.data.products.slice(0, 4))
+        }
+      } catch (error) {
         console.error('Failed to load products:', error)
-      })
-      .finally(() => {
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchData()
   }, [])
 
 
@@ -54,7 +65,7 @@ export default function Home() {
               href="/products?category=stationery"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url('/images/stationary.jpg')`,
@@ -79,7 +90,7 @@ export default function Home() {
               href="/products?category=books"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url('/images/book.jpg')`,
@@ -104,7 +115,7 @@ export default function Home() {
               href="/products?category=uniforms"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center"
                 style={{
                   backgroundImage: `url('/images/uniform.jpg')`,
@@ -127,12 +138,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Categories Grid */}
+      <CategoriesGrid />
+
+      {/* Brands */}
+      <Brands />
+
       {/* Featured Products */}
       <section className="py-20 lg:py-32 bg-white relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
-        
+
         <div className="relative w-full px-4 sm:px-6 lg:px-8 z-10">
           <div className="text-center mb-16 animate-fadeInDown">
             <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
@@ -142,7 +159,7 @@ export default function Home() {
               Handpicked favorites from our collection
             </p>
           </div>
-          
+
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[...Array(6)].map((_, i) => (
@@ -164,7 +181,7 @@ export default function Home() {
                     ? Math.min(...product.variants.map((v) => v.price))
                     : 0
                   const image = product.variants?.[0]?.images?.[0] || ''
-                  
+
                   return (
                     <div
                       key={product._id}
@@ -183,7 +200,7 @@ export default function Home() {
                   )
                 })}
               </div>
-              
+
               <div className="text-center mt-16 animate-fadeInUp animation-delay-600">
                 <Link
                   href="/shop"
@@ -204,6 +221,65 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trending Products */}
+      <section className="py-20 lg:py-32 bg-gray-50 relative overflow-hidden">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 z-10">
+          <div className="text-center mb-16 animate-fadeInDown">
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6">
+              Trending <span className="text-primary">Products</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Most popular items this week
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
+                  <Skeleton variant="rectangular" height={300} />
+                  <div className="p-5">
+                    <Skeleton variant="text" width="80%" className="mb-2" />
+                    <Skeleton variant="text" width="60%" className="mb-4" />
+                    <Skeleton variant="rectangular" height={40} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : trendingProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-children">
+              {trendingProducts.map((product, index) => {
+                const minPrice = product.variants?.length
+                  ? Math.min(...product.variants.map((v) => v.price))
+                  : 0
+                const image = product.variants?.[0]?.images?.[0] || ''
+
+                return (
+                  <div
+                    key={product._id}
+                    className="animate-fadeInUp"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <ProductCard
+                      id={product._id}
+                      productId={product._id}
+                      name={product.name}
+                      price={minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
+                      image={image}
+                      labels={product.categoryId ? [product.categoryId.name] : []}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No trending products available at the moment.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Newsletter */}
       <Newsletter />
 
@@ -211,7 +287,7 @@ export default function Home() {
       <section className="py-20 lg:py-28 bg-gray-50 relative overflow-hidden">
         {/* Decorative background */}
         <div className="absolute inset-0 gift-pattern opacity-20"></div>
-        
+
         <div className="relative w-full px-4 sm:px-6 lg:px-8 z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 stagger-children">
             <div className="group text-center animate-fadeInUp">
@@ -224,7 +300,7 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-secondary transition-colors">Quality Guaranteed</h3>
               <p className="text-gray-600 leading-relaxed">Premium products you can trust</p>
             </div>
-            
+
             <div className="group text-center animate-fadeInUp animation-delay-200">
               <div className="relative w-20 h-20 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-xl group-hover:shadow-primary/50">
                 <svg className="w-10 h-10 text-primary transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +311,7 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-primary transition-colors">Fast Delivery</h3>
               <p className="text-gray-600 leading-relaxed">Quick and secure shipping</p>
             </div>
-            
+
             <div className="group text-center animate-fadeInUp animation-delay-400">
               <div className="relative w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-xl group-hover:shadow-purple/50">
                 <svg className="w-10 h-10 text-purple-600 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

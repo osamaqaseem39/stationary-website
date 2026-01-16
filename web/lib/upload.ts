@@ -96,10 +96,14 @@ export async function uploadImage(
 
     const data = await response.json();
 
-    if (data.success && data.data?.url) {
+    // Check for success flag or success message
+    const isSuccess = data.success || data.message?.toLowerCase().includes('successfully');
+    const url = data.data?.url || data.url || data.link;
+
+    if (isSuccess && url) {
       return {
         success: true,
-        url: data.data.url,
+        url: url,
       };
     } else {
       throw new Error(data.message || 'Upload failed: Invalid response from server');
