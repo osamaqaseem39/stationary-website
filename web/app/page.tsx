@@ -17,6 +17,9 @@ interface Product {
     _id: string
     name: string
   }
+  regularPrice?: number
+  salePrice?: number
+  images?: string[]
   variants?: Array<{
     price: number
     images?: string[]
@@ -177,10 +180,17 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-children">
                 {featuredProducts.map((product, index) => {
-                  const minPrice = product.variants?.length
-                    ? Math.min(...product.variants.map((v) => v.price))
-                    : 0
-                  const image = product.variants?.[0]?.images?.[0] || ''
+                  let displayPrice = 'Price on request'
+                  if (product.variants?.length) {
+                    const min = Math.min(...product.variants.map((v) => v.price))
+                    displayPrice = `From PKR ${min}`
+                  } else if (product.salePrice) {
+                    displayPrice = `PKR ${product.salePrice}`
+                  } else if (product.regularPrice) {
+                    displayPrice = `PKR ${product.regularPrice}`
+                  }
+
+                  const image = product.images?.[0] || product.variants?.[0]?.images?.[0] || '/images/placeholder.jpg'
 
                   return (
                     <div
@@ -192,7 +202,7 @@ export default function Home() {
                         id={product._id}
                         productId={product._id}
                         name={product.name}
-                        price={minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
+                        price={displayPrice}
                         image={image}
                         labels={product.categoryId ? [product.categoryId.name] : []}
                       />
@@ -249,10 +259,17 @@ export default function Home() {
           ) : trendingProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-children">
               {trendingProducts.map((product, index) => {
-                const minPrice = product.variants?.length
-                  ? Math.min(...product.variants.map((v) => v.price))
-                  : 0
-                const image = product.variants?.[0]?.images?.[0] || ''
+                let displayPrice = 'Price on request'
+                if (product.variants?.length) {
+                  const min = Math.min(...product.variants.map((v) => v.price))
+                  displayPrice = `From PKR ${min}`
+                } else if (product.salePrice) {
+                  displayPrice = `PKR ${product.salePrice}`
+                } else if (product.regularPrice) {
+                  displayPrice = `PKR ${product.regularPrice}`
+                }
+
+                const image = product.images?.[0] || product.variants?.[0]?.images?.[0] || '/images/placeholder.jpg'
 
                 return (
                   <div
@@ -264,7 +281,7 @@ export default function Home() {
                       id={product._id}
                       productId={product._id}
                       name={product.name}
-                      price={minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
+                      price={displayPrice}
                       image={image}
                       labels={product.categoryId ? [product.categoryId.name] : []}
                     />
