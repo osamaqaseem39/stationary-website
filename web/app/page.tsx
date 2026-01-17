@@ -36,9 +36,9 @@ export default function Home() {
       setLoading(true)
       try {
         // Fetch featured products (page 1)
-        const featuredRes = await apiClient.getProducts({ limit: 6, page: 1 })
+        const featuredRes = await apiClient.getProducts({ limit: 8, page: 1 })
         if (featuredRes.data?.products) {
-          setFeaturedProducts(featuredRes.data.products.slice(0, 6))
+          setFeaturedProducts(featuredRes.data.products.slice(0, 8))
         }
 
         // Fetch trending products (simulated with page 2)
@@ -164,7 +164,7 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
                   <Skeleton variant="rectangular" height={300} />
@@ -178,7 +178,7 @@ export default function Home() {
             </div>
           ) : featuredProducts.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-children">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 stagger-children">
                 {featuredProducts.map((product, index) => {
                   let displayPrice = 'Price on request'
                   if (product.variants?.length) {
