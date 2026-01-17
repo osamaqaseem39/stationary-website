@@ -86,7 +86,18 @@ class AdminApiClient {
       const data = await response.json();
 
       if (!response.ok) {
-        return { error: data.error || 'Request failed' };
+        // Handle unauthorized or expired token
+        if (
+          response.status === 401 ||
+          data.error === 'Invalid or expired token' ||
+          data.message === 'Invalid or expired token'
+        ) {
+          this.logout();
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
+        }
+        return { error: data.error || data.message || 'Request failed' };
       }
 
       return { data };
@@ -148,7 +159,7 @@ class AdminApiClient {
     if (params?.search) query.append('search', params.search);
     if (params?.page) query.append('page', params.page.toString());
     if (params?.limit) query.append('limit', params.limit.toString());
-    
+
     const queryString = query.toString();
     return this.request<ProductsResponse>(`/products${queryString ? `?${queryString}` : ''}`);
   }
