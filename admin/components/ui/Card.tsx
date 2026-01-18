@@ -23,7 +23,8 @@ export default function Card({
   return (
     <div
       className={`
-        bg-white rounded-lg shadow
+        bg-white rounded-xl shadow-lg border border-gray-100
+        backdrop-blur-sm
         ${paddingClasses[padding]}
         ${className}
       `}
