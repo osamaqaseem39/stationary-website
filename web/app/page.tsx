@@ -119,7 +119,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 w-full">
             {/* Stationery Card */}
             <Link
-              href="/products?category=stationery"
+              href="/shop?category=stationery"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
               <div
@@ -136,7 +136,7 @@ export default function Home() {
 
             {/* Books Card */}
             <Link
-              href="/products?category=books"
+              href="/shop?category=books"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
               <div
@@ -153,7 +153,7 @@ export default function Home() {
 
             {/* Uniforms Card */}
             <Link
-              href="/products?category=uniforms"
+              href="/shop?category=uniforms"
               className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 h-[600px] lg:h-[700px]"
             >
               <div

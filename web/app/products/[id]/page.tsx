@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation'
 import { apiClient } from '@/lib/api'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { useToast } from '@/components/ui/ToastProvider'
+import ProductCard from '@/components/ProductCard'
+import { CURRENCY_PREFIX } from '@/lib/currency'
 
 interface Variant {
   _id: string
@@ -26,6 +28,7 @@ interface Product {
     name: string
   }
   brand?: string
+  images?: string[]
 }
 
 export default function ProductDetailPage() {
@@ -37,47 +40,61 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState<string>('')
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [related, setRelated] = useState<Product[]>([])
+  const [related, setRelated] = useState<any[]>([])
   const { showToast } = useToast()
 
   useEffect(() => {
     if (productId) {
-      apiClient.getProduct(productId).then((result) => {
-        if (result.data) {
-          setProduct(result.data.product)
-          const variantList = result.data.variants || []
-          setVariants(variantList)
-          if (variantList.length > 0) {
-            setSelectedVariant(variantList[0])
-            setSelectedImage(variantList[0]?.images?.[0] || '')
-          }
-          setLoading(false)
+      const loadProduct = async () => {
+        try {
+          const result = await apiClient.getProduct(productId)
+          if (result.data) {
+            const p = result.data.product
+            setProduct(p)
+            const variantList = result.data.variants || []
+            setVariants(variantList)
 
-          // Load related products by category
-          const categoryId = result.data.product?.categoryId?._id
-          if (categoryId) {
-            apiClient.getProducts({ categoryId, limit: 4 }).then((rel) => {
+            if (variantList.length > 0) {
+              setSelectedVariant(variantList[0])
+              setSelectedImage(variantList[0]?.images?.[0] || p?.images?.[0] || '')
+            } else {
+              setSelectedImage(p?.images?.[0] || '')
+            }
+
+            // Load related products
+            const categoryId = p?.categoryId?._id
+            if (categoryId) {
+              const rel = await apiClient.getProducts({ categoryId, limit: 5 })
               if (rel.data?.products) {
-                setRelated(rel.data.products.filter((p: any) => p._id !== productId))
+                setRelated(rel.data.products.filter((prod: any) => prod._id !== productId))
               }
-            })
+            }
           }
+        } catch (error) {
+          console.error('Failed to load product:', error)
+        } finally {
+          setLoading(false)
         }
-      })
+      }
+      loadProduct()
     }
   }, [productId])
 
   const handleAddToCart = () => {
-    if (!selectedVariant || !product) return
+    if (!product) return
+
+    // Fallback price if no variant is selected (though one should be)
+    const price = selectedVariant ? selectedVariant.price : 0
+    const image = selectedImage || (product.images?.[0] || '')
 
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
     const cartItem = {
-      id: `${product._id}-${selectedVariant._id}`,
+      id: selectedVariant ? `${product._id}-${selectedVariant._id}` : product._id,
       productId: product._id,
-      variantId: selectedVariant._id,
+      variantId: selectedVariant?._id,
       name: product.name,
-      price: `PKR ${selectedVariant.price}`,
-      image: selectedImage,
+      price: `${CURRENCY_PREFIX}${price}`,
+      image: image,
       quantity,
       variant: selectedVariant,
     }
@@ -91,342 +108,322 @@ export default function ProductDetailPage() {
 
     localStorage.setItem('cart', JSON.stringify(cart))
     window.dispatchEvent(new Event('cartUpdated'))
-    
-    // Show success message
-    showToast('Added to cart!', 'success')
+    showToast('Added to cart successfully!', 'success')
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading product...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-500 font-medium">Loading premium product...</p>
+        </div>
       </div>
     )
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Product not found</h2>
-          <Link href="/products" className="text-primary hover:underline">
-            ← Back to Products
+      <div className="min-h-screen flex items-center justify-center bg-white p-4">
+        <div className="text-center max-w-md">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Product Not Found</h2>
+          <p className="text-gray-600 mb-8">We couldn't find the product you're looking for. It might have been removed or the link is incorrect.</p>
+          <Link href="/shop" className="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-bold hover:bg-primary transition-all">
+            Back to Shop
           </Link>
         </div>
       </div>
     )
   }
 
-  const allImages = variants
-    .flatMap((v) => v.images || [])
-    .filter(Boolean)
-  const displayImages = allImages.length > 0 ? allImages : ['']
+  const allImages = [
+    ...(product.images || []),
+    ...variants.flatMap((v) => v.images || [])
+  ].filter((img, index, self) => img && self.indexOf(img) === index)
+
+  const displayImages = allImages.length > 0 ? allImages : ['/images/placeholder.jpg']
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8 lg:py-12">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs
-          items={[
-            { label: 'Home', href: '/' },
-            { label: product.categoryId?.name || 'Products', href: '/products' },
-            { label: product.name },
-          ]}
-        />
+    <main className="min-h-screen bg-white">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+        <div className="mb-8">
+          <Breadcrumbs
+            items={[
+              { label: 'Home', href: '/' },
+              { label: 'Shop', href: '/shop' },
+              { label: product.categoryId?.name || 'Category', href: `/shop?category=${product.categoryId?._id}` },
+              { label: product.name },
+            ]}
+          />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Images */}
-          <div className="space-y-4">
-            {/* Main Image */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 aspect-square overflow-hidden">
-              {selectedImage ? (
-                <img
-                  src={selectedImage}
-                  alt={product.name}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-32 h-32 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-
-            {/* Thumbnail Images */}
-            {displayImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
-                {displayImages.slice(0, 4).map((img, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(img)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === img
-                        ? 'border-primary shadow-md'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    {img ? (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* Product Images - Sticky on Large Screens */}
+          <div className="lg:col-span-7">
+            <div className="flex flex-col-reverse md:flex-row gap-4">
+              {/* Thumbnails */}
+              {displayImages.length > 1 && (
+                <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto max-h-[600px] no-scrollbar py-1">
+                  {displayImages.map((img, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(img)}
+                      className={`relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img
+                          ? 'border-primary shadow-md scale-105'
+                          : 'border-gray-100 hover:border-gray-300'
+                        }`}
+                    >
                       <img
                         src={img}
-                        alt={`${product.name} ${index + 1}`}
+                        alt={`${product.name} thumbnail ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100"></div>
-                    )}
-                  </button>
-                ))}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Main Image */}
+              <div className="flex-1">
+                <div className="relative aspect-[4/5] bg-gray-50 rounded-3xl overflow-hidden group shadow-sm border border-gray-100">
+                  {selectedImage ? (
+                    <img
+                      src={selectedImage}
+                      alt={product.name}
+                      className="w-full h-full object-contain p-4 md:p-8 transition-transform duration-700 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg className="w-20 h-20 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+
+                  {/* Zoom Hint */}
+                  <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Product Info */}
-          <div className="space-y-6">
-            <div>
+          {/* Product Information */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="animate-fadeInRight">
               {product.categoryId && (
-                <span className="inline-block px-3 py-1 bg-secondary/20 text-secondary-dark rounded-full text-sm font-medium mb-4">
+                <Link
+                  href={`/shop?category=${product.categoryId._id}`}
+                  className="inline-block px-4 py-1 bg-primary/10 text-primary-dark rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/20 transition-colors"
+                >
                   {product.categoryId.name}
-                </span>
+                </Link>
               )}
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4 uppercase">
                 {product.name}
               </h1>
-              {product.brand && (
-                <p className="text-lg text-gray-600 mb-6">Brand: {product.brand}</p>
-              )}
-            </div>
 
-            {selectedVariant && (
-              <div className="bg-gray-50 rounded-xl p-6">
-                <div className="flex items-baseline gap-4 mb-6">
-                  <span className="text-4xl font-bold text-gray-900">
-                    PKR {selectedVariant.price}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-gray-500 font-medium">(24 Reviews)</span>
+              </div>
+
+              {selectedVariant ? (
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-black text-gray-900">
+                    {CURRENCY_PREFIX}{selectedVariant.price}
                   </span>
-                  {selectedVariant.available !== undefined && (
-                    <span
-                      className={`text-sm font-medium ${
-                        selectedVariant.available > 0
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}
-                    >
-                      {selectedVariant.available > 0
-                        ? `${selectedVariant.available} in stock`
-                        : 'Out of stock'}
+                  {selectedVariant.available !== undefined && selectedVariant.available < 5 && selectedVariant.available > 0 && (
+                    <span className="text-red-500 text-sm font-bold uppercase tracking-tight animate-pulse">
+                      Only {selectedVariant.available} left in stock!
                     </span>
                   )}
                 </div>
+              ) : (
+                <span className="text-2xl font-bold text-gray-900">Price on request</span>
+              )}
+            </div>
 
-                {/* Variant Selection */}
-                {variants.length > 1 && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Select Option:
-                    </label>
-                    <div className="space-y-3">
-                      {variants.map((variant) => (
-                        <button
-                          key={variant._id}
-                          onClick={() => {
-                            setSelectedVariant(variant)
-                            if (variant.images?.[0]) {
-                              setSelectedImage(variant.images[0])
-                            }
-                          }}
-                          disabled={(variant.available || 0) === 0}
-                          className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
-                            selectedVariant?._id === variant._id
-                              ? 'border-primary bg-primary/10'
-                              : 'border-gray-200 hover:border-gray-300'
-                          } ${
-                            (variant.available || 0) === 0
-                              ? 'opacity-50 cursor-not-allowed'
-                              : ''
-                          }`}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="font-semibold">SKU: {variant.sku}</p>
-                              {Object.keys(variant.attributes || {}).length > 0 && (
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {Object.entries(variant.attributes)
-                                    .map(([key, value]) => `${key}: ${value}`)
-                                    .join(', ')}
-                                </p>
-                              )}
-                            </div>
-                            <span className="font-bold">PKR {variant.price}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {/* Description Preview */}
+            <div className="text-gray-600 leading-relaxed text-lg line-clamp-3">
+              {product.description}
+            </div>
 
-                {/* Quantity Selector */}
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Quantity:
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-lg w-fit">
+            {/* Variant Selector */}
+            {variants.length > 1 && (
+              <div className="space-y-4 pt-4 border-t border-gray-100">
+                <label className="block text-sm font-black text-gray-900 uppercase tracking-widest">
+                  Select Option
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {variants.map((variant) => (
                     <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 hover:bg-gray-100 transition-colors"
+                      key={variant._id}
+                      onClick={() => {
+                        setSelectedVariant(variant)
+                        if (variant.images?.[0]) {
+                          setSelectedImage(variant.images[0])
+                        }
+                      }}
+                      disabled={(variant.available || 0) === 0}
+                      className={`flex flex-col p-4 rounded-xl border-2 text-left transition-all ${selectedVariant?._id === variant._id
+                          ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                          : 'border-gray-100 hover:border-gray-200 bg-white'
+                        } ${(variant.available || 0) === 0 ? 'opacity-40 cursor-not-allowed grayscale' : ''
+                        }`}
                     >
-                      -
+                      <span className="font-bold text-gray-900 truncate">
+                        {Object.entries(variant.attributes)
+                          .map(([key, value]) => `${value}`)
+                          .join(' / ') || `SKU: ${variant.sku}`}
+                      </span>
+                      <span className="text-sm font-medium text-gray-500">
+                        {CURRENCY_PREFIX}{variant.price}
+                      </span>
                     </button>
-                    <span className="px-6 py-2 min-w-[4rem] text-center font-semibold">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setQuantity(
-                          Math.min(
-                            selectedVariant.available || 99,
-                            quantity + 1
-                          )
-                        )
-                      }
-                      className="px-4 py-2 hover:bg-gray-100 transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="space-y-6 pt-6 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Quantity */}
+                <div className="flex items-center bg-gray-50 rounded-full px-2 py-1 border border-gray-100 min-w-[140px] justify-between">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm text-gray-600 transition-all font-bold text-xl"
+                  >
+                    -
+                  </button>
+                  <span className="font-bold text-gray-900 w-8 text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(Math.min(selectedVariant?.available || 99, quantity + 1))}
+                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm text-gray-600 transition-all font-bold text-xl"
+                  >
+                    +
+                  </button>
                 </div>
 
-                {/* Add to Cart Button */}
+                {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
-                  disabled={(selectedVariant.available || 0) === 0}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all ${
-                    (selectedVariant.available || 0) === 0
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-gray-900 text-white hover:bg-primary hover:scale-105 shadow-lg'
-                  }`}
+                  disabled={!selectedVariant || (selectedVariant.available || 0) === 0}
+                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-full font-black text-lg uppercase tracking-widest shadow-xl transition-all ${!selectedVariant || (selectedVariant.available || 0) === 0
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                      : 'bg-gray-900 text-white hover:bg-primary hover:scale-[1.02] active:scale-95'
+                    }`}
                 >
-                  {(selectedVariant.available || 0) === 0
-                    ? 'Out of Stock'
-                    : 'Add to Cart'}
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {!selectedVariant || (selectedVariant.available || 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </div>
-            )}
 
-            {/* Description */}
-            {product.description && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Product Description
-                </h2>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.description}
-                </p>
+              {/* Other Actions */}
+              <div className="flex gap-4">
+                <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-colors uppercase text-sm tracking-wider">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  Wishlist
+                </button>
+                <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-colors uppercase text-sm tracking-wider">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                  Share
+                </button>
               </div>
-            )}
+            </div>
 
-            {/* Features */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Product Features
-              </h2>
-              <ul className="space-y-2 text-gray-700">
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-green-500 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
+            {/* Features/Info Trust Badges */}
+            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-100">
+              <div className="text-center">
+                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
-                  Premium Quality Materials
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-green-500 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
+                </div>
+                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Fast Shipping</span>
+              </div>
+              <div className="text-center">
+                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A3.301 3.301 0 0015.5 1h-7a3.301 3.301 0 00-3.317 2.984C5.101 4.908 5 5.946 5 7v2a1 1 0 001 1h12a1 1 0 001-1V7c0-1.054-.101-2.092-.182-3.016z" />
                   </svg>
-                  Fast & Secure Shipping
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-green-500 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
+                </div>
+                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">100% Genuine</span>
+              </div>
+              <div className="text-center">
+                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
-                  30-Day Return Policy
-                </li>
-              </ul>
+                </div>
+                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Secure Pay</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Reviews */}
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
-            <p className="text-gray-600">No reviews yet. Be the first to review this product.</p>
+        {/* Detailed Description Section */}
+        <div className="mt-24 max-w-4xl mx-auto">
+          <div className="border-b border-gray-100 flex gap-8 mb-8 overflow-x-auto no-scrollbar">
+            <button className="pb-4 border-b-2 border-primary text-gray-900 font-black uppercase tracking-widest text-sm whitespace-nowrap">Description</button>
+            <button className="pb-4 text-gray-400 font-bold uppercase tracking-widest text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Specifications</button>
+            <button className="pb-4 text-gray-400 font-bold uppercase tracking-widest text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Reviews (24)</button>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Write a review</h3>
-            <div className="space-y-3">
-              <input className="w-full border rounded px-3 py-2 text-sm" placeholder="Your name" />
-              <textarea className="w-full border rounded px-3 py-2 text-sm" rows={4} placeholder="Your review" />
-              <button className="w-full bg-gray-900 text-white py-2.5 rounded-lg font-semibold hover:bg-primary transition">
-                Submit review
-              </button>
-            </div>
+
+          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed uppercase shadow-sm p-8 rounded-3xl bg-gray-50/50">
+            <p className="whitespace-pre-line">{product.description}</p>
           </div>
         </div>
 
-        {/* Related products */}
+        {/* Related Products Section */}
         {related.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">You may also like</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {related.slice(0, 4).map((p: any) => {
+          <div className="mt-32">
+            <div className="flex items-center justify-between mb-12">
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tight">
+                Recommended <span className="text-primary italic">For You</span>
+              </h2>
+              <Link href="/shop" className="text-sm font-bold uppercase tracking-widest text-primary hover:text-primary-dark transition-colors flex items-center gap-2">
+                View All
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
+              {related.map((p) => {
                 const minPrice = p.variants?.length
                   ? Math.min(...p.variants.map((v: any) => v.price))
                   : 0
-                const image = p.variants?.[0]?.images?.[0] || ''
+                const image = p.images?.[0] || p.variants?.[0]?.images?.[0] || '/images/placeholder.jpg'
+
                 return (
-                  <Link key={p._id} href={`/products/${p._id}`} className="block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition">
-                    <div className="aspect-square bg-gray-100">
-                      {image ? <img src={image} alt={p.name} className="w-full h-full object-cover" /> : null}
-                    </div>
-                    <div className="p-4">
-                      <div className="text-sm font-semibold line-clamp-2 min-h-[2.25rem]">{p.name}</div>
-                      <div className="mt-2 text-gray-900 font-bold">
-                        {minPrice > 0 ? `From PKR ${minPrice}` : 'Price on request'}
-                      </div>
-                    </div>
-                  </Link>
+                  <ProductCard
+                    key={p._id}
+                    id={p._id}
+                    productId={p._id}
+                    name={p.name}
+                    price={minPrice > 0 ? `From ${CURRENCY_PREFIX}${minPrice}` : 'Price on request'}
+                    image={image}
+                    brand={p.brand}
+                    labels={p.categoryId ? [p.categoryId.name] : []}
+                  />
                 )
               })}
             </div>

@@ -20,20 +20,20 @@ export default function Header() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]')
       setCartCount(cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0))
     }
-    
+
     // Load wishlist count
     const loadWishlistCount = () => {
       setWishlistCount(getWishlistCount())
     }
-    
+
     loadCartCount()
     loadWishlistCount()
-    
+
     // Listen for cart and wishlist updates
     window.addEventListener('cartUpdated', loadCartCount)
     window.addEventListener('storage', loadCartCount)
     window.addEventListener('wishlistUpdated', loadWishlistCount)
-    
+
     return () => {
       window.removeEventListener('cartUpdated', loadCartCount)
       window.removeEventListener('storage', loadCartCount)
@@ -44,7 +44,6 @@ export default function Header() {
   const navigation = [
     { name: 'Home', href: '/', active: pathname === '/' },
     { name: 'Shop', href: '/shop', active: pathname === '/shop' },
-    { name: 'Products', href: '/products', active: pathname === '/products' },
     { name: 'Account', href: '/account', active: pathname === '/account' },
   ]
 
@@ -71,11 +70,10 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm font-semibold transition-all duration-300 relative group ${
-                  item.active
+                className={`text-sm font-semibold transition-all duration-300 relative group ${item.active
                     ? 'text-gray-900'
                     : 'text-gray-600 hover:text-gray-900'
-                }`}
+                  }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <span className="relative z-10">{item.name}</span>
@@ -87,7 +85,7 @@ export default function Header() {
                 <span className="absolute inset-0 bg-primary/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
               </Link>
             ))}
-            
+
             {/* Wishlist Icon */}
             <Link
               href="/wishlist"
@@ -186,11 +184,10 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-base font-semibold px-4 py-2 rounded-lg transition-all duration-300 animate-fadeInLeft ${
-                    item.active
+                  className={`text-base font-semibold px-4 py-2 rounded-lg transition-all duration-300 animate-fadeInLeft ${item.active
                       ? 'text-gray-900 bg-primary/10'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
+                    }`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {item.name}
