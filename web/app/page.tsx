@@ -12,18 +12,29 @@ import { apiClient } from '@/lib/api'
 interface Product {
   _id: string
   name: string
+  shortDescription?: string
   description?: string
   brand?: string
+  brandId?: {
+    _id: string
+    name: string
+    slug?: string
+  }
   categoryId?: {
     _id: string
     name: string
+    slug?: string
   }
+  images?: string[]
   regularPrice?: number
   salePrice?: number
-  images?: string[]
+  stockStatus?: string
+  isActive?: boolean
   variants?: Array<{
+    _id: string
     price: number
     images?: string[]
+    quantity?: number
   }>
 }
 
@@ -62,16 +73,19 @@ export default function Home() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-5 stagger-children">
         {products.map((product, index) => {
           let displayPrice = 'Price on request'
-          if (product.variants?.length) {
+
+          if (product.salePrice && product.salePrice > 0) {
+            displayPrice = `PKR ${product.salePrice}`
+          } else if (product.regularPrice && product.regularPrice > 0) {
+            displayPrice = `PKR ${product.regularPrice}`
+          } else if (product.variants?.length) {
             const min = Math.min(...product.variants.map((v) => v.price))
             displayPrice = `From PKR ${min}`
-          } else if (product.salePrice) {
-            displayPrice = `PKR ${product.salePrice}`
-          } else if (product.regularPrice) {
-            displayPrice = `PKR ${product.regularPrice}`
           }
 
           const image = product.images?.[0] || product.variants?.[0]?.images?.[0] || '/images/placeholder.jpg'
+          const isOutOfStock = product.stockStatus === 'outofstock' ||
+            (product.variants && product.variants.length > 0 && product.variants.every(v => (v.quantity || 0) <= 0))
 
           return (
             <div
@@ -85,8 +99,9 @@ export default function Home() {
                 name={product.name}
                 price={displayPrice}
                 image={image}
-                brand={product.brand}
+                brand={product.brand || product.brandId?.name}
                 labels={product.categoryId ? [product.categoryId.name] : []}
+                isOutOfStock={isOutOfStock}
               />
             </div>
           )

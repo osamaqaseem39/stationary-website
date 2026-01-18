@@ -22,13 +22,30 @@ interface Variant {
 interface Product {
   _id: string
   name: string
-  description: string
-  categoryId: {
+  shortDescription?: string
+  description?: string
+  brand?: string
+  brandId?: {
     _id: string
     name: string
+    slug?: string
   }
-  brand?: string
+  categoryId?: {
+    _id: string
+    name: string
+    slug?: string
+  }
   images?: string[]
+  regularPrice?: number
+  salePrice?: number
+  stockStatus?: string
+  isActive?: boolean
+  isBundle?: boolean
+  bundleItems?: Array<{
+    productId: string
+    quantity: number
+    name: string
+  }>
 }
 
 export default function ProductDetailPage() {
@@ -64,7 +81,7 @@ export default function ProductDetailPage() {
             // Load related products
             const categoryId = p?.categoryId?._id
             if (categoryId) {
-              const rel = await apiClient.getProducts({ categoryId, limit: 5 })
+              const rel = await apiClient.getProducts({ categoryId, limit: 10 })
               if (rel.data?.products) {
                 setRelated(rel.data.products.filter((prod: any) => prod._id !== productId))
               }
@@ -83,8 +100,15 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!product) return
 
-    // Fallback price if no variant is selected (though one should be)
-    const price = selectedVariant ? selectedVariant.price : 0
+    let price = 0
+    if (selectedVariant) {
+      price = selectedVariant.price
+    } else if (product.salePrice) {
+      price = product.salePrice
+    } else if (product.regularPrice) {
+      price = product.regularPrice
+    }
+
     const image = selectedImage || (product.images?.[0] || '')
 
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
@@ -143,6 +167,16 @@ export default function ProductDetailPage() {
 
   const displayImages = allImages.length > 0 ? allImages : ['/images/placeholder.jpg']
 
+  // Price Display Logic
+  let displayPrice = 0
+  if (selectedVariant) {
+    displayPrice = selectedVariant.price
+  } else if (product.salePrice) {
+    displayPrice = product.salePrice
+  } else if (product.regularPrice) {
+    displayPrice = product.regularPrice
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
@@ -169,8 +203,8 @@ export default function ProductDetailPage() {
                       key={index}
                       onClick={() => setSelectedImage(img)}
                       className={`relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img
-                          ? 'border-primary shadow-md scale-105'
-                          : 'border-gray-100 hover:border-gray-300'
+                        ? 'border-primary shadow-md scale-105'
+                        : 'border-gray-100 hover:border-gray-300'
                         }`}
                     >
                       <img
@@ -214,14 +248,22 @@ export default function ProductDetailPage() {
           {/* Product Information */}
           <div className="lg:col-span-5 space-y-8">
             <div className="animate-fadeInRight">
-              {product.categoryId && (
-                <Link
-                  href={`/shop?category=${product.categoryId._id}`}
-                  className="inline-block px-4 py-1 bg-primary/10 text-primary-dark rounded-full text-xs font-bold uppercase tracking-widest mb-4 hover:bg-primary/20 transition-colors"
-                >
-                  {product.categoryId.name}
-                </Link>
-              )}
+              <div className="flex items-center justify-between gap-4 mb-4">
+                {product.categoryId && (
+                  <Link
+                    href={`/shop?category=${product.categoryId._id}`}
+                    className="inline-block px-4 py-1 bg-primary/10 text-primary-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-primary/20 transition-colors"
+                  >
+                    {product.categoryId.name}
+                  </Link>
+                )}
+                {product.brand || product.brandId?.name ? (
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                    Brand: {product.brand || product.brandId?.name}
+                  </span>
+                ) : null}
+              </div>
+
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4 uppercase">
                 {product.name}
               </h1>
@@ -237,20 +279,21 @@ export default function ProductDetailPage() {
                 <span className="text-gray-500 font-medium">(24 Reviews)</span>
               </div>
 
-              {selectedVariant ? (
-                <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-black text-gray-900">
-                    {CURRENCY_PREFIX}{selectedVariant.price}
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl font-black text-gray-900">
+                  {displayPrice > 0 ? `${CURRENCY_PREFIX}${displayPrice}` : 'Price on request'}
+                </span>
+                {selectedVariant && selectedVariant.available !== undefined && selectedVariant.available < 5 && selectedVariant.available > 0 && (
+                  <span className="text-red-500 text-sm font-bold uppercase tracking-tight animate-pulse">
+                    Only {selectedVariant.available} left!
                   </span>
-                  {selectedVariant.available !== undefined && selectedVariant.available < 5 && selectedVariant.available > 0 && (
-                    <span className="text-red-500 text-sm font-bold uppercase tracking-tight animate-pulse">
-                      Only {selectedVariant.available} left in stock!
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <span className="text-2xl font-bold text-gray-900">Price on request</span>
-              )}
+                )}
+                {!selectedVariant && product.stockStatus === 'outofstock' && (
+                  <span className="text-red-500 text-sm font-bold uppercase tracking-tight">
+                    Out of Stock
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Description Preview */}
@@ -276,8 +319,8 @@ export default function ProductDetailPage() {
                       }}
                       disabled={(variant.available || 0) === 0}
                       className={`flex flex-col p-4 rounded-xl border-2 text-left transition-all ${selectedVariant?._id === variant._id
-                          ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                          : 'border-gray-100 hover:border-gray-200 bg-white'
+                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                        : 'border-gray-100 hover:border-gray-200 bg-white'
                         } ${(variant.available || 0) === 0 ? 'opacity-40 cursor-not-allowed grayscale' : ''
                         }`}
                     >
@@ -320,8 +363,8 @@ export default function ProductDetailPage() {
                   onClick={handleAddToCart}
                   disabled={!selectedVariant || (selectedVariant.available || 0) === 0}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-full font-black text-lg uppercase tracking-widest shadow-xl transition-all ${!selectedVariant || (selectedVariant.available || 0) === 0
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                      : 'bg-gray-900 text-white hover:bg-primary hover:scale-[1.02] active:scale-95'
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                    : 'bg-gray-900 text-white hover:bg-primary hover:scale-[1.02] active:scale-95'
                     }`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
