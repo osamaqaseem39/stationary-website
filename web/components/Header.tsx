@@ -49,23 +49,25 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-md shadow-gray-100/50 transition-all duration-300">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between gap-4 h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center group animate-fadeInLeft">
+          <Link href="/" className="flex items-center group animate-fadeInLeft flex-shrink-0">
             <span className="text-2xl lg:text-3xl font-extrabold text-primary group-hover:scale-110 transition-transform duration-300 relative">
               GBS Store
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
             </span>
           </Link>
 
-          {/* Search */}
-          <div className="hidden md:block flex-1">
-            <SearchBar />
+          {/* Search - Center Aligned */}
+          <div className="hidden md:block absolute left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 pointer-events-none">
+            <div className="flex justify-center pointer-events-auto">
+              <SearchBar />
+            </div>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 animate-fadeInDown">
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8 animate-fadeInDown ml-auto flex-shrink-0">
             {navigation.map((item, index) => (
               <Link
                 key={item.name}

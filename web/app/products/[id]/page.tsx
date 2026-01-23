@@ -219,12 +219,12 @@ export default function ProductDetailPage() {
 
               {/* Main Image */}
               <div className="flex-1">
-                <div className="relative aspect-[4/5] bg-gray-50 rounded-3xl overflow-hidden group shadow-sm border border-gray-100">
+                <div className="relative aspect-square bg-gray-50 rounded-3xl overflow-hidden group shadow-sm border border-gray-100">
                   {selectedImage ? (
                     <img
                       src={selectedImage}
                       alt={product.name}
-                      className="w-full h-full object-contain p-4 md:p-8 transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-contain p-2 md:p-4 transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
