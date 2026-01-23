@@ -180,7 +180,7 @@ export default function ProductDetailPage() {
   return (
     <main className="min-h-screen bg-white">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-        <div className="mb-8">
+        <div className="mb-6">
           <Breadcrumbs
             items={[
               { label: 'Home', href: '/' },
@@ -191,20 +191,20 @@ export default function ProductDetailPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Product Images - Sticky on Large Screens */}
           <div className="lg:col-span-7">
             <div className="flex flex-col-reverse md:flex-row gap-4">
               {/* Thumbnails */}
               {displayImages.length > 1 && (
-                <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto max-h-[600px] no-scrollbar py-1">
+                <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto max-h-[600px] no-scrollbar py-1">
                   {displayImages.map((img, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(img)}
-                      className={`relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img
-                        ? 'border-primary shadow-md scale-105'
-                        : 'border-gray-100 hover:border-gray-300'
+                      className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border transition-all ${selectedImage === img
+                        ? 'border-gray-900 shadow-sm'
+                        : 'border-gray-200 hover:border-gray-300'
                         }`}
                     >
                       <img
@@ -219,77 +219,70 @@ export default function ProductDetailPage() {
 
               {/* Main Image */}
               <div className="flex-1 w-full max-w-[600px] mx-auto">
-                <div className="relative w-full aspect-square bg-gray-50 rounded-3xl overflow-hidden group shadow-sm border border-gray-100 max-w-full">
+                <div className="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden group border border-gray-200 max-w-full">
                   {selectedImage ? (
                     <img
                       src={selectedImage}
                       alt={product.name}
-                      className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <svg className="w-20 h-20 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
                   )}
-
-                  {/* Zoom Hint */}
-                  <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                    </svg>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Product Information */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="animate-fadeInRight">
-              <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="lg:col-span-5 space-y-6">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
                 {product.categoryId && (
                   <Link
                     href={`/shop?category=${product.categoryId._id}`}
-                    className="inline-block px-4 py-1 bg-primary/10 text-primary-dark rounded-full text-xs font-bold uppercase tracking-widest hover:bg-primary/20 transition-colors"
+                    className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium hover:bg-gray-200 transition-colors"
                   >
                     {product.categoryId.name}
                   </Link>
                 )}
                 {product.brand || product.brandId?.name ? (
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                    Brand: {product.brand || product.brandId?.name}
+                  <span className="text-xs text-gray-500">
+                    {product.brand || product.brandId?.name}
                   </span>
                 ) : null}
               </div>
 
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 leading-tight mb-4 uppercase">
+              <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 leading-tight mb-3">
                 {product.name}
               </h1>
 
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center text-yellow-400">
                   {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                    <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
                 </div>
-                <span className="text-gray-500 font-medium">(24 Reviews)</span>
+                <span className="text-sm text-gray-500">(24 Reviews)</span>
               </div>
 
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-black text-gray-900">
+              <div className="flex items-baseline gap-3 mb-4">
+                <span className="text-2xl font-semibold text-gray-900">
                   {displayPrice > 0 ? `${CURRENCY_PREFIX}${displayPrice}` : 'Price on request'}
                 </span>
                 {selectedVariant && selectedVariant.available !== undefined && selectedVariant.available < 5 && selectedVariant.available > 0 && (
-                  <span className="text-red-500 text-sm font-bold uppercase tracking-tight animate-pulse">
-                    Only {selectedVariant.available} left!
+                  <span className="text-sm text-red-600 font-medium">
+                    Only {selectedVariant.available} left
                   </span>
                 )}
                 {!selectedVariant && product.stockStatus === 'outofstock' && (
-                  <span className="text-red-500 text-sm font-bold uppercase tracking-tight">
+                  <span className="text-sm text-red-600 font-medium">
                     Out of Stock
                   </span>
                 )}
@@ -297,17 +290,17 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description Preview */}
-            <div className="text-gray-600 leading-relaxed text-lg line-clamp-3">
+            <div className="text-gray-600 leading-relaxed text-sm line-clamp-3">
               {product.description}
             </div>
 
             {/* Variant Selector */}
             {variants.length > 1 && (
-              <div className="space-y-4 pt-4 border-t border-gray-100">
-                <label className="block text-sm font-black text-gray-900 uppercase tracking-widest">
+              <div className="space-y-3 pt-4 border-t border-gray-100">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Select Option
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {variants.map((variant) => (
                     <button
                       key={variant._id}
@@ -318,18 +311,18 @@ export default function ProductDetailPage() {
                         }
                       }}
                       disabled={(variant.available || 0) === 0}
-                      className={`flex flex-col p-4 rounded-xl border-2 text-left transition-all ${selectedVariant?._id === variant._id
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                        : 'border-gray-100 hover:border-gray-200 bg-white'
-                        } ${(variant.available || 0) === 0 ? 'opacity-40 cursor-not-allowed grayscale' : ''
+                      className={`flex flex-col p-3 rounded-lg border text-left transition-all ${selectedVariant?._id === variant._id
+                        ? 'border-gray-900 bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        } ${(variant.available || 0) === 0 ? 'opacity-40 cursor-not-allowed' : ''
                         }`}
                     >
-                      <span className="font-bold text-gray-900 truncate">
+                      <span className="text-sm font-medium text-gray-900 truncate">
                         {Object.entries(variant.attributes)
                           .map(([key, value]) => `${value}`)
                           .join(' / ') || `SKU: ${variant.sku}`}
                       </span>
-                      <span className="text-sm font-medium text-gray-500">
+                      <span className="text-xs text-gray-500 mt-1">
                         {CURRENCY_PREFIX}{variant.price}
                       </span>
                     </button>
@@ -339,20 +332,20 @@ export default function ProductDetailPage() {
             )}
 
             {/* Actions */}
-            <div className="space-y-6 pt-6 border-t border-gray-100">
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row gap-3">
                 {/* Quantity */}
-                <div className="flex items-center bg-gray-50 rounded-full px-2 py-1 border border-gray-100 min-w-[140px] justify-between">
+                <div className="flex items-center bg-gray-50 rounded-lg px-2 py-1 border border-gray-200 min-w-[120px] justify-between">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm text-gray-600 transition-all font-bold text-xl"
+                    className="w-8 h-8 flex items-center justify-center rounded hover:bg-white text-gray-600 transition-all text-sm font-medium"
                   >
-                    -
+                    −
                   </button>
-                  <span className="font-bold text-gray-900 w-8 text-center">{quantity}</span>
+                  <span className="text-sm font-medium text-gray-900 w-8 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(selectedVariant?.available || 99, quantity + 1))}
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white hover:shadow-sm text-gray-600 transition-all font-bold text-xl"
+                    className="w-8 h-8 flex items-center justify-center rounded hover:bg-white text-gray-600 transition-all text-sm font-medium"
                   >
                     +
                   </button>
@@ -362,28 +355,28 @@ export default function ProductDetailPage() {
                 <button
                   onClick={handleAddToCart}
                   disabled={!selectedVariant || (selectedVariant.available || 0) === 0}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-full font-black text-lg uppercase tracking-widest shadow-xl transition-all ${!selectedVariant || (selectedVariant.available || 0) === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                    : 'bg-gray-900 text-white hover:bg-primary hover:scale-[1.02] active:scale-95'
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium text-sm transition-all ${!selectedVariant || (selectedVariant.available || 0) === 0
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
                     }`}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
                   {!selectedVariant || (selectedVariant.available || 0) === 0 ? 'Out of Stock' : 'Add to Cart'}
                 </button>
               </div>
 
               {/* Other Actions */}
-              <div className="flex gap-4">
-                <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-colors uppercase text-sm tracking-wider">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex gap-2">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                   Wishlist
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-colors uppercase text-sm tracking-wider">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                   </svg>
                   Share
@@ -392,59 +385,59 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Features/Info Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-100">
+            <div className="grid grid-cols-3 gap-3 pt-6 border-t border-gray-100">
               <div className="text-center">
-                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-1.5 text-gray-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Fast Shipping</span>
+                <span className="text-xs text-gray-500">Fast Shipping</span>
               </div>
               <div className="text-center">
-                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-1.5 text-gray-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A3.301 3.301 0 0015.5 1h-7a3.301 3.301 0 00-3.317 2.984C5.101 4.908 5 5.946 5 7v2a1 1 0 001 1h12a1 1 0 001-1V7c0-1.054-.101-2.092-.182-3.016z" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">100% Genuine</span>
+                <span className="text-xs text-gray-500">100% Genuine</span>
               </div>
               <div className="text-center">
-                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-2 text-primary">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-1.5 text-gray-600">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                 </div>
-                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Secure Pay</span>
+                <span className="text-xs text-gray-500">Secure Pay</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Detailed Description Section */}
-        <div className="mt-24 max-w-4xl mx-auto">
-          <div className="border-b border-gray-100 flex gap-8 mb-8 overflow-x-auto no-scrollbar">
-            <button className="pb-4 border-b-2 border-primary text-gray-900 font-black uppercase tracking-widest text-sm whitespace-nowrap">Description</button>
-            <button className="pb-4 text-gray-400 font-bold uppercase tracking-widest text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Specifications</button>
-            <button className="pb-4 text-gray-400 font-bold uppercase tracking-widest text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Reviews (24)</button>
+        <div className="mt-16 max-w-4xl mx-auto">
+          <div className="border-b border-gray-200 flex gap-6 mb-6 overflow-x-auto no-scrollbar">
+            <button className="pb-3 border-b-2 border-gray-900 text-gray-900 font-medium text-sm whitespace-nowrap">Description</button>
+            <button className="pb-3 text-gray-400 font-medium text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Specifications</button>
+            <button className="pb-3 text-gray-400 font-medium text-sm hover:text-gray-600 transition-colors whitespace-nowrap">Reviews (24)</button>
           </div>
 
-          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed uppercase shadow-sm p-8 rounded-3xl bg-gray-50/50">
+          <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed p-6 rounded-lg bg-gray-50">
             <p className="whitespace-pre-line">{product.description}</p>
           </div>
         </div>
 
         {/* Related Products Section */}
         {related.length > 0 && (
-          <div className="mt-32">
-            <div className="flex items-center justify-between mb-12">
-              <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tight">
-                Recommended <span className="text-primary italic">For You</span>
+          <div className="mt-20">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900">
+                Recommended for You
               </h2>
-              <Link href="/shop" className="text-sm font-bold uppercase tracking-widest text-primary hover:text-primary-dark transition-colors flex items-center gap-2">
+              <Link href="/shop" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-1">
                 View All
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </Link>
             </div>
