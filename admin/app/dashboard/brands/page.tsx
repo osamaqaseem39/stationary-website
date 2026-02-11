@@ -37,7 +37,7 @@ export default function BrandsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6">
             <h1 className="text-4xl font-bold">Brands</h1>
             <Link
               href="/dashboard/brands/new"
@@ -149,9 +149,7 @@ export default function BrandsPage() {
                 </table>
               </div>
             </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

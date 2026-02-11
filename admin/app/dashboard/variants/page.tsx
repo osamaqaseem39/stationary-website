@@ -42,30 +42,30 @@ export default function VariantsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold">Product Variants</h1>
-            <Link
-              href="/dashboard/variants/new"
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-            >
-              Add Variant
-            </Link>
-          </div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-bold">Product Variants</h1>
+        <Link
+          href="/dashboard/variants/new"
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Add Variant
+        </Link>
+      </div>
 
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Filter by Product ID..."
-              value={productFilter}
-              onChange={(e) => setProductFilter(e.target.value)}
-              className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Filter by Product ID..."
+          value={productFilter}
+          onChange={(e) => setProductFilter(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
-          {loading ? (
-            <div className="bg-white p-6 rounded-lg shadow">Loading...</div>
-          ) : (
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+      {loading ? (
+        <div className="bg-white p-6 rounded-lg shadow">Loading...</div>
+      ) : (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -146,9 +146,7 @@ export default function VariantsPage() {
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

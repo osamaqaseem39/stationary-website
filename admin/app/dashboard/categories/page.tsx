@@ -41,27 +41,27 @@ export default function CategoriesPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold">Categories</h1>
-            <Link
-              href="/dashboard/categories/new"
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-            >
-              Add Category
-            </Link>
-          </div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-bold">Categories</h1>
+        <Link
+          href="/dashboard/categories/new"
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Add Category
+        </Link>
+      </div>
 
-          {loading ? (
+      {loading ? (
             <div className="bg-white p-8 rounded-xl shadow-sm flex items-center justify-center">
               <div className="animate-pulse flex items-center gap-3">
                 <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <span className="text-gray-600 font-medium">Loading categories...</span>
               </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -161,9 +161,7 @@ export default function CategoriesPage() {
                 </table>
               </div>
             </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

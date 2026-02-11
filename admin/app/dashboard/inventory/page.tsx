@@ -88,9 +88,9 @@ export default function InventoryPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-6">Inventory</h1>
+      <h1 className="text-4xl font-bold mb-6">Inventory</h1>
 
-          {loading ? (
+      {loading ? (
             <div className="bg-white p-6 rounded-lg shadow">Loading...</div>
           ) : (
             <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -237,9 +237,7 @@ export default function InventoryPage() {
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

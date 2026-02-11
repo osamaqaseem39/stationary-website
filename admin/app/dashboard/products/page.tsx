@@ -59,7 +59,7 @@ export default function ProductsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6">
             <h1 className="text-4xl font-bold">Products</h1>
             <div className="flex gap-3">
               <Link
@@ -77,17 +77,17 @@ export default function ProductsPage() {
             </div>
           </div>
 
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
-          {loading ? (
+      {loading ? (
             <div className="bg-white p-8 rounded-xl shadow-sm flex items-center justify-center">
               <div className="animate-pulse flex items-center gap-3">
                 <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -216,10 +216,8 @@ export default function ProductsPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
