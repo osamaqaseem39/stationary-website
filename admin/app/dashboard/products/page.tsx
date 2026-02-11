@@ -58,38 +58,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100">
-      <aside className="fixed left-0 top-0 h-full w-64 bg-gray-800 text-white">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold">GBS Admin</h1>
-        </div>
-        <nav className="mt-8">
-          <Link href="/dashboard" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Dashboard
-          </Link>
-          <Link href="/dashboard/products" className="block px-6 py-3 bg-gray-700">
-            Products
-          </Link>
-          <Link href="/dashboard/orders" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Orders
-          </Link>
-          <Link href="/dashboard/inventory" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Inventory
-          </Link>
-          <Link href="/dashboard/users" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Users
-          </Link>
-          <Link href="/dashboard/categories" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Categories
-          </Link>
-          <Link href="/dashboard/variants" className="block px-6 py-3 hover:bg-gray-700 transition">
-            Variants
-          </Link>
-        </nav>
-      </aside>
-
-      <div className="ml-64 p-8">
-        <div className="max-w-7xl">
+    <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-4xl font-bold">Products</h1>
             <div className="flex gap-3">
@@ -251,7 +220,7 @@ export default function ProductsPage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 

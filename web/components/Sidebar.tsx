@@ -19,6 +19,8 @@ interface SidebarProps {
   selectedCategory: string
   onCategoryChange: (categoryId: string) => void
   productCount: number
+  selectedFilters: string[]
+  onFiltersChange: (filters: string[]) => void
 }
 
 export default function Sidebar({
@@ -27,23 +29,29 @@ export default function Sidebar({
   selectedCategory,
   onCategoryChange,
   productCount,
+  selectedFilters,
+  onFiltersChange,
 }: SidebarProps) {
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [isProductTypeOpen, setIsProductTypeOpen] = useState(false)
 
   const toggleFilter = (filterId: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(filterId)
-        ? prev.filter((id) => id !== filterId)
-        : [...prev, filterId]
-    )
+    const next = selectedFilters.includes(filterId)
+      ? selectedFilters.filter((id) => id !== filterId)
+      : [...selectedFilters, filterId]
+
+    onFiltersChange(next)
   }
 
   return (
-    <aside className="w-full md:w-64 lg:w-72 pr-0 md:pr-8 mb-8 md:mb-0">
+    <div className="w-full md:w-64 lg:w-72 pr-0 md:pr-8 mb-8 md:mb-0">
       {/* Category Section */}
       <div className="mb-8">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Category</h2>
+        <div className="flex items-center justify-between mb-1.5">
+          <h2 className="text-base font-semibold text-gray-900">Category</h2>
+          <span className="text-xs text-gray-500 font-medium">
+            {productCount} item{productCount === 1 ? '' : 's'}
+          </span>
+        </div>
         <ul className="space-y-1">
           {categories.map((category) => (
             <li key={category.id}>
@@ -92,24 +100,26 @@ export default function Sidebar({
         </div>
 
         {/* Filter Options */}
-        <div className="space-y-2">
-          {filterOptions.map((option) => (
-            <label
-              key={option.id}
-              className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
-            >
-              <input
-                type="checkbox"
-                checked={selectedFilters.includes(option.id)}
-                onChange={() => toggleFilter(option.id)}
-                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2"
-              />
-              <span className="text-sm text-gray-700">{option.name}</span>
-            </label>
-          ))}
-        </div>
+        {isProductTypeOpen && (
+          <div className="space-y-2">
+            {filterOptions.map((option) => (
+              <label
+                key={option.id}
+                className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedFilters.includes(option.id)}
+                  onChange={() => toggleFilter(option.id)}
+                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary focus:ring-2"
+                />
+                <span className="text-sm text-gray-700">{option.name}</span>
+              </label>
+            ))}
+          </div>
+        )}
       </div>
-    </aside>
+    </div>
   )
 }
 

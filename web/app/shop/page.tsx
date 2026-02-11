@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Banner from '@/components/Banner'
 import Sidebar from '@/components/Sidebar'
 import ProductCard from '@/components/ProductCard'
 import Newsletter from '@/components/Newsletter'
 import { apiClient } from '@/lib/api'
-import { CURRENCY_PREFIX } from '@/lib/currency'
 
 interface Product {
   _id: string
@@ -45,10 +45,13 @@ interface Category {
 }
 
 export default function ShopPage() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState('default')
   const productsPerPage = 15 // Increased to fit 5-column grid better
@@ -77,6 +80,41 @@ export default function ShopPage() {
     loadData()
   }, [])
 
+  // Sync URL ?category=slug with selectedCategory (which uses category _id)
+  useEffect(() => {
+    const slugFromUrl = searchParams?.get('category')
+    if (!slugFromUrl || categories.length === 0) {
+      return
+    }
+
+    const normalizedSlug = slugFromUrl.toLowerCase()
+    const matched = categories.find((cat) => {
+      const catSlug = cat.slug || cat.name.toLowerCase().replace(/ /g, '-')
+      return catSlug === normalizedSlug
+    })
+
+    if (matched) {
+      setSelectedCategory(matched._id)
+    } else {
+      setSelectedCategory('all')
+    }
+  }, [searchParams, categories])
+
+  const brandOptions = useMemo(() => {
+    const map = new Map<string, string>()
+
+    products.forEach((product) => {
+      const id = product.brandId?._id || product.brand
+      const name = product.brandId?.name || product.brand
+
+      if (id && name && !map.has(id)) {
+        map.set(id, name)
+      }
+    })
+
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
+  }, [products])
+
   const filteredProducts = useMemo(() => {
     let filtered = products
 
@@ -84,6 +122,18 @@ export default function ShopPage() {
       filtered = filtered.filter((product) =>
         product.categoryId?._id === selectedCategory
       )
+    }
+
+    if (selectedBrands.length > 0) {
+      filtered = filtered.filter((product) => {
+        const brandId = product.brandId?._id
+        const brandName = product.brand
+
+        return (
+          (brandId && selectedBrands.includes(brandId)) ||
+          (brandName && selectedBrands.includes(brandName))
+        )
+      })
     }
 
     if (sortBy === 'price-low') {
@@ -123,7 +173,7 @@ export default function ShopPage() {
     ...categories.map(cat => ({ id: cat._id, name: cat.name }))
   ]
 
-  const filterOptions = categories.map(cat => ({ id: cat._id, name: cat.name }))
+  const filterOptions = brandOptions
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -144,6 +194,8 @@ export default function ShopPage() {
                   selectedCategory={selectedCategory}
                   onCategoryChange={setSelectedCategory}
                   productCount={filteredProducts.length}
+                  selectedFilters={selectedBrands}
+                  onFiltersChange={setSelectedBrands}
                 />
               </div>
             </aside>
